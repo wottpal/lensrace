@@ -13,6 +13,6 @@ const nextConfig = {
 }
 
 // eslint-disable-next-line
-const withTM = require('next-transpile-modules')(['@ethathon/contracts'])
+const withTM = require('next-transpile-modules')(['@lensrace/contracts'])
 
 module.exports = withTM(nextConfig)

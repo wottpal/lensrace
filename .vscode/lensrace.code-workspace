@@ -19,8 +19,7 @@
       "**/pnpm-lock.yaml": true,
       "**/.turbo": true,
       "**/.next": true,
-      "**/.vercel": true,
-      "**/packages/contracts/deployments": true
+      "**/.vercel": true
     },
     "search.exclude": {
       "**/packages/contracts/deployments": true
@@ -34,13 +33,13 @@
       "source.organizeImports": true,
       "source.fixAll.eslint": true
     },
-    "peacock.color": "#00f5d4",
+    "peacock.color": "#4bc951",
     "workbench.colorCustomizations": {
-      "sash.hoverBorder": "#29ffe2",
-      "statusBar.background": "#00f5d4",
+      "sash.hoverBorder": "#72d577",
+      "statusBar.background": "#4bc951",
       "statusBar.foreground": "#15202b",
-      "statusBarItem.hoverBackground": "#00c2a8",
-      "statusBarItem.remoteBackground": "#00f5d4",
+      "statusBarItem.hoverBackground": "#34ad3a",
+      "statusBarItem.remoteBackground": "#4bc951",
       "statusBarItem.remoteForeground": "#15202b"
     }
   }

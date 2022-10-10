@@ -10,7 +10,7 @@ const accounts = [
 ]
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.9',
+  solidity: '0.8.10',
   networks: {
     hardhat: {
       chainId: 1337,
@@ -27,11 +27,11 @@ const config: HardhatUserConfig = {
       url: process.env.RPC_80001 || 'https://rpc.ankr.com/polygon_mumbai',
       accounts,
     },
-    goerli: {
-      chainId: 5,
-      url: process.env.RPC_5 || 'https://rpc.ankr.com/eth_goerli',
-      accounts,
-    },
+    // goerli: {
+    //   chainId: 5,
+    //   url: process.env.RPC_5 || 'https://rpc.ankr.com/eth_goerli',
+    //   accounts,
+    // },
   },
   namedAccounts: {
     deployer: {
