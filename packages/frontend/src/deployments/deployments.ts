@@ -12,5 +12,5 @@ export const deployments: DeploymentsType = env.supportedChains.reduce(
     ...acc,
     [chainId]: import(`@lensrace/contracts/deployments/${chainId}.json`),
   }),
-  {}
+  {},
 )

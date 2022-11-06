@@ -47,7 +47,7 @@ describe('Lock', function () {
       const latestTime = await time.latest()
       const Lock = await ethers.getContractFactory('Lock')
       await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        'Unlock time should be in the future'
+        'Unlock time should be in the future',
       )
     })
   })
@@ -68,7 +68,7 @@ describe('Lock', function () {
 
         // We use lock.connect() to send a transaction from another account
         await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-          "You aren't the owner"
+          "You aren't the owner",
         )
       })
 
@@ -95,14 +95,14 @@ describe('Lock', function () {
     describe('Transfers', function () {
       it('Should transfer the funds to the owner', async function () {
         const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-          deployOneYearLockFixture
+          deployOneYearLockFixture,
         )
 
         await time.increaseTo(unlockTime)
 
         await expect(lock.withdraw()).to.changeEtherBalances(
           [owner, lock],
-          [lockedAmount, -lockedAmount]
+          [lockedAmount, -lockedAmount],
         )
       })
     })
