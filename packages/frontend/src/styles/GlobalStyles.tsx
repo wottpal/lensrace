@@ -7,7 +7,7 @@ const customStyles = css`
     ${tw`scroll-smooth antialiased`}
   }
   body {
-    ${tw`bg-secondary-1 text-black`}
+    ${tw`bg-secondary-1 font-sans text-black`}
     ${tw`relative h-screen min-h-screen`}
   }
 
