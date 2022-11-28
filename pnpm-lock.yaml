@@ -88,6 +88,7 @@ importers:
       '@emotion/styled': ^11.10.5
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.2
+      '@heroicons/react': ^2.0.13
       '@lensrace/contracts': workspace:*
       '@rainbow-me/rainbowkit': ^0.8.0
       '@testing-library/react': ^13.4.0
@@ -125,6 +126,7 @@ importers:
       '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       '@emotion/server': 11.10.0_@emotion+css@11.10.5
       '@emotion/styled': 11.10.5_hmjty4frusbltjhl3xd7udcm2y
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@lensrace/contracts': link:../contracts
       '@rainbow-me/rainbowkit': 0.8.0_apbs2532tdpmma2bvmmzlhkina
       daisyui: 2.42.1_lycaqaeny3mp632atgvyvqdgwe
@@ -2002,6 +2004,14 @@ packages:
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
     dependencies:
       '@hapi/hoek': 9.3.0
+    dev: false
+
+  /@heroicons/react/2.0.13_react@18.2.0:
+    resolution: {integrity: sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==}
+    peerDependencies:
+      react: '>= 16 || ^18.0.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.7:

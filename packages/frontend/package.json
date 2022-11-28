@@ -21,6 +21,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.5",
+    "@heroicons/react": "^2.0.13",
     "@lensrace/contracts": "workspace:*",
     "@rainbow-me/rainbowkit": "^0.8.0",
     "daisyui": "^2.42.1",
