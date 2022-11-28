@@ -26,5 +26,22 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  daisyui: {
+    themes: [
+      {
+        lensrace: {
+          primary: '#1F786C',
+          secondary: '#8ec2a2',
+          accent: '#37CDBE',
+          neutral: '#3D4451',
+          'base-100': '#cbeecc',
+          info: '#3ABFF8',
+          success: '#36D399',
+          warning: '#FBBD23',
+          error: '#F87272',
+        },
+      },
+    ],
+  },
+  plugins: [require('daisyui')],
 }
