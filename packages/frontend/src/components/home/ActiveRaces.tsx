@@ -9,8 +9,7 @@ export interface ActiveRacesProps {
 export const ActiveRaces: FC<ActiveRacesProps> = ({ races }) => {
   return (
     <div tw="flex flex-col items-center pb-12">
-      {/* Heading and cards */}
-      <h2 tw="pb-6 font-semibold text-xl italic">Active races</h2>
+      <div tw="divider pb-6 pt-12 font-mono font-semibold">All active Races</div>
       <div>
         <li tw="list-none space-y-4">
           {races.map((race) => (
