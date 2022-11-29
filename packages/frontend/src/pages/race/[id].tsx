@@ -8,12 +8,9 @@ const HomePage: NextPage = () => {
     <>
       <CenterBody>
         <Hero />
-        {/* Connect Wallet */}
-        {/* Select Lens Handle */}
-        {/* Select Lens Participants */}
-        {/* Set Name */}
-        {/* Set Follower Goal */}
-        {/* Setup Button */}
+        {/* Button actions */}
+        {/* Race details */}
+        {/* Leaderboard */}
       </CenterBody>
     </>
   )
