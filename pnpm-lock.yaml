@@ -106,6 +106,7 @@ importers:
       eslint-config-prettier: ^8.5.0
       eslint-plugin-react: ^7.31.11
       ethers: ^5.7.2
+      lodash.merge: ^4.6.2
       next: ^13.0.5
       next-seo: ^5.14.1
       next-transpile-modules: ^10.0.0
@@ -131,6 +132,7 @@ importers:
       '@rainbow-me/rainbowkit': 0.8.0_apbs2532tdpmma2bvmmzlhkina
       daisyui: 2.42.1_lycaqaeny3mp632atgvyvqdgwe
       ethers: 5.7.2
+      lodash.merge: 4.6.2
       next: 13.0.5_22zznl4krlnhaprkt2jq37lyte
       next-seo: 5.14.1_7iuvftg57tblwyxclfkwku5xo4
       next-transpile-modules: 10.0.0
@@ -8643,7 +8645,6 @@ packages:
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-    dev: true
 
   /lodash.throttle/4.1.1:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}

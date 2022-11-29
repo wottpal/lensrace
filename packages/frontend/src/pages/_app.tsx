@@ -2,11 +2,12 @@ import { BaseLayout } from '@components/layout/BaseLayout'
 import { HotToastConfig } from '@components/layout/HotToastConfig'
 import { cache } from '@emotion/css'
 import { CacheProvider } from '@emotion/react'
-import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { env } from '@shared/environment'
 import { chains, wagmiClient } from '@shared/wagmiClient'
 import GlobalStyles from '@styles/GlobalStyles'
+import merge from 'lodash.merge'
 import { DefaultSeo } from 'next-seo'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -20,6 +21,16 @@ Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // TODO: Check if font can be changed
+  const lensTheme = merge(lightTheme(), {
+    colors: {
+      accentColor: '#1F786C',
+    },
+    fonts: {
+      body: 'Inter, sans-serif',
+    },
+  } as Theme)
+
   return (
     <>
       {/* SEO TODO */}
@@ -52,7 +63,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         <GlobalStyles />
 
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains} theme={darkTheme()} coolMode={true}>
+          <RainbowKitProvider
+            chains={chains}
+            theme={lensTheme}
+            // TODO: Change color font with twin macro? Not sure if possible
+            coolMode={true}
+            appInfo={{
+              appName: 'lensrace.xyz',
+            }}
+          >
             <BaseLayout>
               <Component {...pageProps} />
             </BaseLayout>
