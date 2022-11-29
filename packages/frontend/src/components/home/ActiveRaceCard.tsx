@@ -11,6 +11,7 @@ export interface ActiveRaceCardProps {
 }
 export const ActiveRaceCard: FC<ActiveRaceCardProps> = ({ race }) => {
   return (
+    // TODO: Not sure it this should be broken down further into components
     <div tw="rounded-lg border-2 border-base-content/20 p-6 w-[430px]">
       {/* Header */}
       <div tw="flex justify-between">
