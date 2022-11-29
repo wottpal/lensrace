@@ -1,3 +1,4 @@
+import { DividerHeading } from '@components/shared/DividerHeading'
 import { Race } from '@models/Race.model'
 import { FC } from 'react'
 import 'twin.macro'
@@ -9,7 +10,7 @@ export interface ActiveRacesProps {
 export const ActiveRaces: FC<ActiveRacesProps> = ({ races }) => {
   return (
     <div tw="flex flex-col items-center pb-12">
-      <div tw="divider pb-6 pt-12 font-mono font-semibold">All active Races</div>
+      <DividerHeading title="All active races" />
       <div>
         <li tw="list-none space-y-4">
           {races.map((race) => (
