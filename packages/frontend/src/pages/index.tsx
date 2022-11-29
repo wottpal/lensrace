@@ -18,8 +18,6 @@ const HomePage: NextPage = () => {
         >
           Start a new race
         </Link>
-        {/* Horizontal border */}
-        <div tw="my-16 w-52 border border-base-content/20" />
         <ActiveRaces races={raceData} />
       </CenterBody>
     </>
