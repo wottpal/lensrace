@@ -58,7 +58,7 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputComboBox />
+          <InputComboBox disabled={disabled} />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           {/* Set Name */}
