@@ -2,6 +2,7 @@ import { CenterBody } from '@components/layout/CenterBody'
 import { DividerHeading } from '@components/shared/DividerHeading'
 import { Hero } from '@components/shared/Hero'
 import { Input } from '@components/shared/Input'
+import { InputComboBox } from '@components/shared/InputCombobox'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
@@ -57,6 +58,7 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
+          <InputComboBox />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           {/* Set Name */}
