@@ -91,6 +91,7 @@ importers:
       '@heroicons/react': ^2.0.13
       '@lensrace/contracts': workspace:*
       '@rainbow-me/rainbowkit': ^0.8.0
+      '@tailwindcss/forms': ^0.5.3
       '@testing-library/react': ^13.4.0
       '@types/downloadjs': ^1.4.3
       '@types/lodash.merge': ^4.6.7
@@ -116,6 +117,7 @@ importers:
       prettier-plugin-twin.macro: ^1.0.11
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-hook-form: ^7.40.0
       react-hot-toast: ^2.4.0
       sharp: ^0.31.2
       tailwindcss: ^3.2.4
@@ -131,6 +133,7 @@ importers:
       '@heroicons/react': 2.0.13_react@18.2.0
       '@lensrace/contracts': link:../contracts
       '@rainbow-me/rainbowkit': 0.8.0_apbs2532tdpmma2bvmmzlhkina
+      '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.4
       daisyui: 2.42.1_lycaqaeny3mp632atgvyvqdgwe
       ethers: 5.7.2
       lodash.merge: 4.6.2
@@ -140,6 +143,7 @@ importers:
       nprogress: 0.2.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-hook-form: 7.40.0_react@18.2.0
       react-hot-toast: 2.4.0_owo25xnefcwdq3zjgtohz6dbju
       sharp: 0.31.2
       use-async-effect: 2.2.7_react@18.2.0
@@ -3071,6 +3075,15 @@ packages:
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
     dependencies:
       tslib: 2.4.1
+
+  /@tailwindcss/forms/0.5.3_tailwindcss@3.2.4:
+    resolution: {integrity: sha512-y5mb86JUoiUgBjY/o6FJSFZSEttfb3Q5gllE4xoKjAAD+vBrnIhE4dViwUuow3va8mpH4s9jyUbUbrRGoRdc2Q==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
+    dependencies:
+      mini-svg-data-uri: 1.4.4
+      tailwindcss: 3.2.4_postcss@8.4.18
+    dev: false
 
   /@tanstack/query-core/4.15.1:
     resolution: {integrity: sha512-+UfqJsNbPIVo0a9ANW0ZxtjiMfGLaaoIaL9vZeVycvmBuWywJGtSi7fgPVMCPdZQFOzMsaXaOsDtSKQD5xLRVQ==}
@@ -9185,6 +9198,11 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /mini-svg-data-uri/1.4.4:
+    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==}
+    hasBin: true
+    dev: false
+
   /minimalistic-assert/1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
 
@@ -10417,6 +10435,15 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+
+  /react-hook-form/7.40.0_react@18.2.0:
+    resolution: {integrity: sha512-0rokdxMPJs0k9bvFtY6dbcSydyNhnZNXCR49jgDr/aR03FDHFOK6gfh8ccqB3fl696Mk7lqh04xdm+agqWXKSw==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-hot-toast/2.4.0_owo25xnefcwdq3zjgtohz6dbju:
     resolution: {integrity: sha512-qnnVbXropKuwUpriVVosgo8QrB+IaPJCpL8oBI6Ov84uvHZ5QQcTp2qg6ku2wNfgJl6rlQXJIQU5q+5lmPOutA==}

@@ -5,5 +5,5 @@ export interface DividerHeadingProps {
   title: string
 }
 export const DividerHeading: FC<DividerHeadingProps> = ({ title }) => {
-  return <div tw="divider pb-6 pt-12 font-mono font-semibold">{title}</div>
+  return <div tw="divider py-6 font-mono font-semibold">{title}</div>
 }
