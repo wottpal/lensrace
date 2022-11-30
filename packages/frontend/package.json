@@ -22,6 +22,7 @@
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.5",
     "@heroicons/react": "^2.0.13",
+    "@hookform/resolvers": "^2.9.10",
     "@lensrace/contracts": "workspace:*",
     "@rainbow-me/rainbowkit": "^0.8.0",
     "@tailwindcss/forms": "^0.5.3",
@@ -38,7 +39,8 @@
     "react-hot-toast": "^2.4.0",
     "sharp": "^0.31.2",
     "use-async-effect": "^2.2.7",
-    "wagmi": "^0.8.6"
+    "wagmi": "^0.8.6",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",

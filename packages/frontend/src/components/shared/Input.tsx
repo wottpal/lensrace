@@ -27,21 +27,16 @@ export const Input: FC<InputProps> = ({
       <div tw="relative mt-1 rounded-md shadow-sm">
         <input
           disabled={disabled}
-          {...register(registerId, {
-            required: {
-              value: true,
-              message: 'Race names is required',
-            },
-          })}
+          {...register(registerId)}
           type={input}
           name={registerId}
           id={registerId}
           css={[
-            tw`block w-full rounded-lg border-primary border pr-10 ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
+            tw`block w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
             disabled &&
               tw`text-base-content/20 shadow-sm placeholder:text-base-content/20 disabled:(cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/5)`,
             errors[registerId] &&
-              tw`border-error text-error placeholder-error focus:(border-error ring-error)`,
+              tw`border-error pr-10 text-error placeholder-error focus:(border-error ring-error)`,
           ]}
           // placeholder={placeholder}
           aria-invalid={errors[registerId] ? 'true' : 'false'}

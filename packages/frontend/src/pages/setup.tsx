@@ -2,13 +2,22 @@ import { CenterBody } from '@components/layout/CenterBody'
 import { DividerHeading } from '@components/shared/DividerHeading'
 import { Hero } from '@components/shared/Hero'
 import { Input } from '@components/shared/Input'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
 import { useAccount, useNetwork } from 'wagmi'
+import * as yup from 'yup'
 import { env } from '../shared/environment'
+
+const schema = yup
+  .object({
+    raceName: yup.string().required(),
+    followerGoal: yup.number().positive().integer().required(),
+  })
+  .required()
 
 export type FormInputs = {
   raceName: string
@@ -30,7 +39,9 @@ const HomePage: NextPage = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormInputs>()
+  } = useForm<FormInputs>({
+    resolver: yupResolver(schema),
+  })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
   return (
@@ -61,6 +72,14 @@ const HomePage: NextPage = () => {
 
           {/* Set Follower Goal */}
           <DividerHeading title="Set Absolute Follower Goal" />
+          <Input
+            placeholder="100"
+            input="number"
+            registerId="followerGoal"
+            disabled={disabled}
+            register={register}
+            errors={errors}
+          />
           {/* Setup Button */}
 
           {/* TODO: Refactor button */}
