@@ -93,6 +93,7 @@ importers:
       '@rainbow-me/rainbowkit': ^0.8.0
       '@testing-library/react': ^13.4.0
       '@types/downloadjs': ^1.4.3
+      '@types/lodash.merge': ^4.6.7
       '@types/node': ^16.18.3
       '@types/nprogress': ^0.2.0
       '@types/react': ^18.0.25
@@ -152,6 +153,7 @@ importers:
       '@ethersproject/providers': 5.7.2
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
       '@types/downloadjs': 1.4.3
+      '@types/lodash.merge': 4.6.7
       '@types/node': 16.18.3
       '@types/nprogress': 0.2.0
       '@types/react': 18.0.25
@@ -3301,6 +3303,16 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/lodash.merge/4.6.7:
+    resolution: {integrity: sha512-OwxUJ9E50gw3LnAefSHJPHaBLGEKmQBQ7CZe/xflHkyy/wH2zVyEIAKReHvVrrn7zKdF58p16We9kMfh7v0RRQ==}
+    dependencies:
+      '@types/lodash': 4.14.190
+    dev: true
+
+  /@types/lodash/4.14.190:
+    resolution: {integrity: sha512-5iJ3FBJBvQHQ8sFhEhJfjUP+G+LalhavTkYyrAYqz5MEJG+erSv0k9KJLb6q7++17Lafk1scaTIFXcMJlwK8Mw==}
     dev: true
 
   /@types/lru-cache/5.1.1:

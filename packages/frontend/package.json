@@ -47,6 +47,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@testing-library/react": "^13.4.0",
     "@types/downloadjs": "^1.4.3",
+    "@types/lodash.merge": "^4.6.7",
     "@types/node": "^16.18.3",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.0.25",
