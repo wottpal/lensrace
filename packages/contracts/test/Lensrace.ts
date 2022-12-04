@@ -1,14 +1,17 @@
+import { impersonateAccount } from '@nomicfoundation/hardhat-network-helpers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { BigNumber, constants, Contract, ContractFactory } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
-import { Lensrace__factory } from '../typechain-types'
+import { RevertReasons } from '../shared/revertReasons'
+import { ILensHub__factory, Lensrace__factory } from '../typechain-types'
 
 /**
  * Constants & Global Variables
  */
 const LENSHUB_ADDRESS = getAddress('0xdb46d1dc155634fbc732f92e853b10b288ad5a1d')
+const RANDOM_LENS_PROFILE_OWNER = getAddress('0xc86cd9f65300189019f6ac1bf90422e45f524cfb')
 
 let LensraceFactory: ContractFactory
 let contract: Contract
@@ -27,7 +30,7 @@ beforeEach(async () => {
   contract = await LensraceFactory.deploy(LENSHUB_ADDRESS)
 })
 
-describe('Lensrace', function() {
+describe('Lensrace', function () {
   const deployRace = async (profileIds: number[], raceName: string, followerGoal: number) => {
     const deployRaceTx = await contract.deployRace(profileIds, raceName, followerGoal)
     let raceAddress = constants.AddressZero
@@ -61,6 +64,39 @@ describe('Lensrace', function() {
     const { race } = await deployRace(profileIds, raceName, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
     expect(await race.followerGoal()).to.equal(followerGoal)
-    expect(await race.getProfileIds()).to.deep.equal(profileIds.map(id => BigNumber.from(id)))
+    expect(await race.getProfileIds()).to.deep.equal(profileIds.map((id) => BigNumber.from(id)))
+  })
+
+  it('it should not settle before reached goal', async () => {
+    const profileIds = [1208, 994]
+    const raceName = 'Epic Race'
+    const followerGoal = 100
+    const { race } = await deployRace(profileIds, raceName, followerGoal)
+    await expect(race.settle({ gasLimit: 150000 + 25000 * profileIds.length })).to.be.revertedWith(
+      RevertReasons.RaceGoalNotReached,
+    )
+    expect(await race.hasSettled()).to.equal(false)
+    expect(await race.winnerProfileId()).to.equal(0)
+  })
+
+  it('it should settle and declare winner correctly', async () => {
+    const profileIds = [1208, 994]
+    const raceName = 'Epic Race'
+    const followerGoal = 100
+    const { race } = await deployRace(profileIds, raceName, followerGoal)
+
+    // Give #994 an extra follow to reach 100
+    await impersonateAccount(RANDOM_LENS_PROFILE_OWNER)
+    const profileOwner = await ethers.getSigner(RANDOM_LENS_PROFILE_OWNER)
+    const lensHub = ILensHub__factory.connect(LENSHUB_ADDRESS, profileOwner)
+    await lensHub.follow([994], [[]])
+
+    // Race settling should go though and declare #994
+    await expect(race.settle({ gasLimit: 150000 + 25000 * profileIds.length }))
+      .to.emit(race, 'RaceSettled')
+      .withArgs(994, 100)
+
+    expect(await race.hasSettled()).to.equal(true)
+    expect(await race.winnerProfileId()).to.equal(994)
   })
 })
