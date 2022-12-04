@@ -2,7 +2,6 @@
 pragma solidity ^0.8.10;
 
 import {Lensrace} from "./Lensrace.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@aave/lens-protocol/contracts/interfaces/ILensHub.sol";
 
@@ -34,6 +33,8 @@ contract LensraceFactory {
         string memory raceName,
         uint256 followerGoal
     ) external returns (address) {
+        require(profileIdsExist(profileIds), "not all given profile-ids exist");
+
         // Clone & init Lensrace
         Lensrace race = Lensrace(Clones.clone(raceLib));
         race.init(address(this), profileIds, raceName, followerGoal);
@@ -41,6 +42,17 @@ contract LensraceFactory {
 
         emit RaceDeployed(address(race));
         return address(race);
+    }
+
+    /**
+     * @notice Returns `true` if given `profileIds` all exist.
+     */
+    function profileIdsExist(uint256[] memory profileIds) internal view returns (bool) {
+        for (uint256 i = 0; i < profileIds.length; i++) {
+            address followNft = lensHub.getFollowNFT(profileIds[i]);
+            if (followNft == address(0)) return false;
+        }
+        return true;
     }
 
     /**

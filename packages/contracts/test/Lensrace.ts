@@ -57,10 +57,16 @@ describe('Lensrace', function () {
     expect(raceAddress).to.equal(latestRace)
   })
 
+  it('it should not deploy a race with nonexistent profile-ids', async () => {
+    await expect(contract.deployRace([994, 1239291391391239], '', 100)).to.be.revertedWith(
+      RevertReasons.NotAllProfileIdsExist,
+    )
+  })
+
   it('it should correctly set race attributes', async () => {
     const profileIds = [1208, 994]
     const raceName = 'Epic Race'
-    const followerGoal = 69
+    const followerGoal = 100
     const { race } = await deployRace(profileIds, raceName, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
     expect(await race.followerGoal()).to.equal(followerGoal)
@@ -76,7 +82,7 @@ describe('Lensrace', function () {
       RevertReasons.RaceGoalNotReached,
     )
     expect(await race.hasSettled()).to.equal(false)
-    expect(await race.winnerProfileId()).to.equal(0)
+    expect(await race.winningProfileId()).to.equal(0)
   })
 
   it('it should settle and declare winner correctly', async () => {
@@ -97,6 +103,6 @@ describe('Lensrace', function () {
       .withArgs(994, 100)
 
     expect(await race.hasSettled()).to.equal(true)
-    expect(await race.winnerProfileId()).to.equal(994)
+    expect(await race.winningProfileId()).to.equal(994)
   })
 })

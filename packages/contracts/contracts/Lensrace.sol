@@ -14,7 +14,8 @@ contract Lensrace {
     uint256 public followerGoal;
 
     bool public hasSettled = false;
-    uint256 public winnerProfileId;
+    uint256 public winningProfileId;
+    uint256 public winningFollowerCount;
 
     /**
      * @notice Initializes the contract parameters. Can be only called once and
@@ -36,6 +37,11 @@ contract Lensrace {
         profileIds = _profileIds;
         raceName = _raceName;
         followerGoal = _followerGoal;
+
+        // Check and revert if winning condition is already fullfilled
+        uint256 _winningProfileId;
+        (_winningProfileId, ) = canSettle();
+        require(_winningProfileId == 0, "can be settled on init");
     }
 
     /**
@@ -46,29 +52,43 @@ contract Lensrace {
     }
 
     /**
-     * @notice Settles the race if the winning condition has reached by one participating
-     *   `profileIds`. Reverts if no one has reached the `followerGoal` yet.
+     * @notice Checks if the winning condition has reached by a participating profile.
+     * @return `profileId` and `followerCount` of the winning account (zero if none).
      */
-    function settle() public returns (uint256) {
-        // Determine max follower count and associated profile id
-        uint256 maxFollowerCount;
+    function canSettle() public view returns (uint256, uint256) {
         uint256 maxProfileId;
+        uint256 maxFollowerCount;
         for (uint256 i = 0; i < profileIds.length; i++) {
             address followNft = factory.lensHub().getFollowNFT(profileIds[i]);
+            if (followNft == address(0)) continue;
             uint256 followerCount = IERC721Enumerable(followNft).totalSupply();
             if (followerCount > maxFollowerCount) {
-                maxFollowerCount = followerCount;
                 maxProfileId = profileIds[i];
+                maxFollowerCount = followerCount;
             }
         }
+        if (maxFollowerCount < followerGoal) {
+            return (0, 0);
+        }
+        return (maxProfileId, maxFollowerCount);
+    }
 
-        require(maxFollowerCount >= followerGoal, "goal not reached yet");
+    /**
+     * @notice Settles the race if the winning condition has reached by a participating profile.
+     *   Reverts if no one has reached the `followerGoal` yet.
+     */
+    function settle() public returns (uint256) {
+        uint256 _winningProfileId;
+        uint256 _winningFollowerCount;
+        (_winningProfileId, _winningFollowerCount) = canSettle();
+        require(_winningProfileId != 0, "goal not reached yet");
 
         // Settle race and store winner
         hasSettled = true;
-        winnerProfileId = maxProfileId;
-        emit RaceSettled(winnerProfileId, maxFollowerCount);
+        winningProfileId = _winningProfileId;
+        winningFollowerCount = _winningFollowerCount;
+        emit RaceSettled(winningProfileId, winningFollowerCount);
 
-        return winnerProfileId;
+        return winningProfileId;
     }
 }
