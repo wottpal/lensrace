@@ -35,7 +35,7 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
         __Ownable_init();
     }
 
-    /// @notice Update LensraceVictoryNFT contract address.
+    /// @notice Sets `raceNft` contract address.
     function setRaceNft(address _raceNft) external onlyOwner {
         raceNft = LensraceVictoryNFT(_raceNft);
     }

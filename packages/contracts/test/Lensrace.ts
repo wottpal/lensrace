@@ -35,14 +35,16 @@ let addrs: SignerWithAddress[]
  */
 beforeEach(async () => {
   ;[owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners()
-  addresses = getAddressesFor(parseInt(await getChainId()))
+  addresses = getAddressesFor(network.name)
 
   LensraceFactory = await ethers.getContractFactory('LensraceFactory')
   factory = await upgrades.deployProxy(LensraceFactory, [addresses.LensHub])
   await factory.deployed()
 
   LensraceVictoryNFT = await ethers.getContractFactory('LensraceVictoryNFT')
-  raceNft = await LensraceVictoryNFT.deploy(factory.address, '')
+  raceNft = await LensraceVictoryNFT.deploy('')
+  await raceNft.grantFactoryRole(factory.address)
+
   await factory.setRaceNft(raceNft.address)
 })
 

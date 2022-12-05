@@ -15,9 +15,13 @@ contract LensraceVictoryNFT is ERC721, AccessControl {
     Counters.Counter private _tokenIdCounter;
     string public baseURI;
 
-    constructor(address factory, string memory baseURI_) ERC721("Lensrace Victory", "LRV") {
+    constructor(string memory baseURI_) ERC721("Lensrace Victory", "LRV") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(FACTORY_ROLE, factory);
+        baseURI = baseURI_;
+    }
+
+    /// @notice Sets `baseURI` which is used to prefix the `tokenUri`.
+    function setBaseURI(string memory baseURI_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         baseURI = baseURI_;
     }
 
@@ -29,11 +33,6 @@ contract LensraceVictoryNFT is ERC721, AccessControl {
     /// @notice Grants `RACE_ROLE` to `Lensrace` contract(s).
     function grantRaceRole(address race) public onlyRole(FACTORY_ROLE) {
         _grantRole(RACE_ROLE, race);
-    }
-
-    /// @notice Sets `baseURI` which is used to prefix the `tokenUri`.
-    function setBaseURI(string memory baseURI_) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        baseURI = baseURI_;
     }
 
     /// @notice Returns `baseURI` which is used to prefix the `tokenUri`.
