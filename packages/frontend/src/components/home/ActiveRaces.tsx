@@ -11,13 +11,13 @@ export const ActiveRaces: FC<ActiveRacesProps> = ({ races }) => {
   return (
     <div tw="flex flex-col items-center pb-12">
       <DividerHeading title="All active races" />
-      <div>
-        <li tw="list-none space-y-4">
+      <ul>
+        <li tw="list-none space-y-6">
           {races.map((race) => (
             <ActiveRaceCard key={race?.id} race={race} />
           ))}
         </li>
-      </div>
+      </ul>
     </div>
   )
 }

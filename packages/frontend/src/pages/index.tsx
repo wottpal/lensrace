@@ -13,7 +13,7 @@ const HomePage: NextPage = () => {
         <Hero />
         {/* TODO: Refactor to @apply custom style btn css class or component */}
         <Link
-          tw="btn btn-primary btn-wide rounded-full border-primary bg-primary font-mono text-white normal-case hover:(border-primary-focus bg-primary-focus)"
+          tw="btn btn-primary btn-wide rounded-full border-primary bg-primary font-mono font-bold text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)"
           href="/setup"
         >
           Start a new race

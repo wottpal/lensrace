@@ -89,7 +89,7 @@ const HomePage: NextPage = () => {
             <button
               type="submit"
               disabled={disabled}
-              tw="btn btn-primary btn-wide my-6 rounded-full border-primary bg-primary font-mono text-white normal-case hover:(border-primary-focus bg-primary-focus)"
+              tw="btn btn-primary btn-wide my-6 rounded-full border-primary bg-primary font-bold font-mono text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)"
             >
               Start Race
             </button>

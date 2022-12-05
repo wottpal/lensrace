@@ -11,11 +11,10 @@ export interface ActiveRaceCardProps {
 }
 export const ActiveRaceCard: FC<ActiveRaceCardProps> = ({ race }) => {
   return (
-    // TODO: Not sure it this should be broken down further into components
-    <div tw="rounded-lg border-2 border-base-content/20 p-6 w-[430px]">
+    <div tw="rounded-lg border-2 border-base-content/10 px-6 py-4 w-[430px]">
       {/* Header */}
       <div tw="flex justify-between">
-        <div tw="flex items-center justify-between">
+        <div tw="flex items-center justify-between space-x-1">
           <h3 tw="font-bold text-xl">{race.name}</h3>
           <Indicator />
         </div>
@@ -27,12 +26,14 @@ export const ActiveRaceCard: FC<ActiveRaceCardProps> = ({ race }) => {
           Details <ArrowRightCircleIcon tw="ml-2 h-6 w-6" />
         </Link>
       </div>
+
       {/* Race Details */}
       <p tw="pt-2 font-mono text-sm">
         First to reach <span tw="font-bold">{race.followerGoal.toLocaleString()} followers</span>.
       </p>
+
       {/* Avatar Group */}
-      <div tw="flex flex-col items-center pt-4">
+      <div tw="mt-6 flex flex-col items-center">
         <div tw="avatar avatar-group -space-x-3 p-2">
           {race.participants.map((participant) => (
             <Avatar key={participant.name} participant={participant} />
