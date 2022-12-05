@@ -3,7 +3,7 @@ import { BaseLayout } from '@components/layout/BaseLayout'
 import { HotToastConfig } from '@components/layout/HotToastConfig'
 import { cache } from '@emotion/css'
 import { CacheProvider } from '@emotion/react'
-import { lensClient } from '@libs/lensApi'
+import { lensApiClient } from '@libs/lensApi'
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { env } from '@shared/environment'
@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               appName: 'lensrace.xyz',
             }}
           >
-            <ApolloProvider client={lensClient}>
+            <ApolloProvider client={lensApiClient}>
               <BaseLayout>
                 <Component {...pageProps} />
               </BaseLayout>

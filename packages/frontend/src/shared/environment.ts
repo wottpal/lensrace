@@ -23,7 +23,8 @@ export const env = {
     80001: process.env.NEXT_PUBLIC_RPC_80001!, // Mumbai
   },
 
-  lensApiUrl: process.env.NEXT_PUBLIC_PRODUCTION_MODE
-    ? 'https://api.lens.dev'
-    : 'https://api-mumbai.lens.dev', // Lens API URL
+  lensApiUrl:
+    process.env.NEXT_PUBLIC_PRODUCTION_MODE === 'true'
+      ? 'https://api.lens.dev'
+      : 'https://api-mumbai.lens.dev', // Lens API URL
 }
