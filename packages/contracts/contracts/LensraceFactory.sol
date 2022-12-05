@@ -3,29 +3,41 @@ pragma solidity ^0.8.10;
 
 import {Lensrace} from "./Lensrace.sol";
 import {LensraceVictoryNFT} from "./LensraceVictoryNFT.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@aave/lens-protocol/contracts/interfaces/ILensHub.sol";
 
-contract LensraceFactory is Ownable {
+contract LensraceFactory is Initializable, OwnableUpgradeable {
     event RaceDeployed(address indexed race);
 
-    ILensHub public immutable lensHub;
-    address private immutable raceLib;
-
+    ILensHub public lensHub;
     LensraceVictoryNFT public raceNft;
+    address private raceLib;
+
     Lensrace[] public races;
     uint256[50] __gap;
 
-    constructor(address _lensHub) {
+    /**
+     * @notice Initializes contract parameters. Can be only called once by the owner.
+     * @param _lensHub Address of the used LensHub contract.
+     */
+    function initialize(address _lensHub) external initializer {
         require(_lensHub != address(0), "lensHub address cannot be zero");
         lensHub = ILensHub(_lensHub);
 
-        // Create empty sample race to clone from
+        // Create empty sample Lensrace contract to clone from
         Lensrace race = new Lensrace();
         uint256[] memory arr;
-        race.init(address(this), arr, "", 0);
+        race.initialize(address(this), arr, "", 0);
         raceLib = address(race);
+
+        __Ownable_init();
+    }
+
+    /// @notice Update LensraceVictoryNFT contract address.
+    function setRaceNft(address _raceNft) external onlyOwner {
+        raceNft = LensraceVictoryNFT(_raceNft);
     }
 
     /**
@@ -43,9 +55,9 @@ contract LensraceFactory is Ownable {
         require(profileIds.length > 0, "profileIds cannot be empty");
         require(profileIdsExist(profileIds), "not all given profileIds exist");
 
-        // Clone & init Lensrace
+        // Clone & initialize Lensrace
         Lensrace race = Lensrace(Clones.clone(raceLib));
-        race.init(address(this), profileIds, raceName, followerGoal);
+        race.initialize(address(this), profileIds, raceName, followerGoal);
         races.push(race);
 
         // Grant minting rights fot victory NFT
@@ -53,10 +65,6 @@ contract LensraceFactory is Ownable {
 
         emit RaceDeployed(address(race));
         return address(race);
-    }
-
-    function setRaceNft(address _raceNft) external onlyOwner {
-        raceNft = LensraceVictoryNFT(_raceNft);
     }
 
     /// @notice Returns `true` if given `profileIds` all exist.

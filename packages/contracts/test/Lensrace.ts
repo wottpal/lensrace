@@ -5,7 +5,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { BigNumber, constants, Contract, ContractFactory } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
-import { ethers } from 'hardhat'
+import { ethers, upgrades } from 'hardhat'
 import { RevertReasons } from '../shared/revertReasons'
 import { ILensHub__factory, Lensrace__factory } from '../typechain-types'
 
@@ -33,8 +33,11 @@ let addrs: SignerWithAddress[]
  */
 beforeEach(async () => {
   ;[owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners()
+
   LensraceFactory = await ethers.getContractFactory('LensraceFactory')
-  factory = await LensraceFactory.deploy(LENSHUB_ADDRESS)
+  factory = await upgrades.deployProxy(LensraceFactory, [LENSHUB_ADDRESS])
+  await factory.deployed()
+
   LensraceVictoryNFT = await ethers.getContractFactory('LensraceVictoryNFT')
   raceNft = await LensraceVictoryNFT.deploy(factory.address, '')
   await factory.setRaceNft(raceNft.address)
@@ -61,7 +64,7 @@ describe('Lensrace', function() {
   })
 
   it('it should not deploy factory without a given lenshub address', async () => {
-    await expect(LensraceFactory.deploy(constants.AddressZero)).to.be.revertedWith(
+    await expect(upgrades.deployProxy(LensraceFactory, [constants.AddressZero])).to.be.revertedWith(
       RevertReasons.LensHubAddressEmpty,
     )
   })
@@ -71,7 +74,8 @@ describe('Lensrace', function() {
   })
 
   it('it should not deploy a race without the raceNft contract set', async () => {
-    const factory = await LensraceFactory.deploy(LENSHUB_ADDRESS)
+    const factory = await upgrades.deployProxy(LensraceFactory, [LENSHUB_ADDRESS])
+    await factory.deployed()
     await expect(factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)).to.be.revertedWith(
       RevertReasons.RaceNftAddressEmpty,
     )
@@ -89,7 +93,7 @@ describe('Lensrace', function() {
 
   it('it should be possible to initialize a race only once', async () => {
     const { race } = await deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)
-    await expect(race.init(factory.address, [], '', 0)).to.be.revertedWith(
+    await expect(race.initialize(factory.address, [], '', 0)).to.be.revertedWith(
       RevertReasons.ContractAlreadyInitialized,
     )
   })
@@ -121,7 +125,7 @@ describe('Lensrace', function() {
     const raceName = 'Epic Race'
     const followerGoal = 100
     const { race } = await deployRace(profileIds, raceName, followerGoal)
-    await expect(race.settle({ gasLimit: 200000 + 25000 * profileIds.length })).to.be.revertedWith(
+    await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length })).to.be.revertedWith(
       RevertReasons.RaceGoalNotReached,
     )
     expect(await race.hasSettled()).to.equal(false)
@@ -142,7 +146,7 @@ describe('Lensrace', function() {
 
     // Race settling should go through and declare profile
     await expect(raceNft.ownerOf(0)).to.be.reverted
-    await expect(race.settle({ gasLimit: 200000 + 25000 * profileIds.length }))
+    await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length }))
       .to.emit(race, 'RaceSettled')
       .withArgs(LENS_PROFILE_ID_99_FOLLOWERS, 100, OWNER_LENS_PROFILE_ID_99_FOLLOWERS, 0)
 
