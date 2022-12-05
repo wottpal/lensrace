@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { impersonateAccount } from '@nomicfoundation/hardhat-network-helpers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { BigNumber, constants, Contract, ContractFactory } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, network, upgrades } from 'hardhat'
+import { AddressesType, getAddressesFor } from '../shared/deploymentAddresses'
 import { RevertReasons } from '../shared/revertReasons'
 import { ILensHub__factory, Lensrace__factory } from '../typechain-types'
 
 /**
  * Constants & Global Variables
  */
-const LENSHUB_ADDRESS = getAddress('0xdb46d1dc155634fbc732f92e853b10b288ad5a1d')
 const LENS_PROFILE_ID_99_FOLLOWERS = 994
 const OWNER_LENS_PROFILE_ID_99_FOLLOWERS = getAddress('0xd761d5368B3445d2D553a34Fa680e7E5Ed8fD28B')
 const RANDOM_LENS_PROFILE_OWNER = getAddress('0xc86cd9f65300189019f6ac1bf90422e45f524cfb')
 
+let addresses: AddressesType
 let LensraceFactory: ContractFactory
 let factory: Contract
 let LensraceVictoryNFT: ContractFactory
@@ -33,9 +35,10 @@ let addrs: SignerWithAddress[]
  */
 beforeEach(async () => {
   ;[owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners()
+  addresses = getAddressesFor(parseInt(await getChainId()))
 
   LensraceFactory = await ethers.getContractFactory('LensraceFactory')
-  factory = await upgrades.deployProxy(LensraceFactory, [LENSHUB_ADDRESS])
+  factory = await upgrades.deployProxy(LensraceFactory, [addresses.LensHub])
   await factory.deployed()
 
   LensraceVictoryNFT = await ethers.getContractFactory('LensraceVictoryNFT')
@@ -60,7 +63,7 @@ describe('Lensrace', function() {
   }
 
   it('it should have the correct lenshub address', async () => {
-    expect(await factory.lensHub()).to.equals(LENSHUB_ADDRESS)
+    expect(await factory.lensHub()).to.equals(addresses.LensHub)
   })
 
   it('it should not deploy factory without a given lenshub address', async () => {
@@ -74,7 +77,7 @@ describe('Lensrace', function() {
   })
 
   it('it should not deploy a race without the raceNft contract set', async () => {
-    const factory = await upgrades.deployProxy(LensraceFactory, [LENSHUB_ADDRESS])
+    const factory = await upgrades.deployProxy(LensraceFactory, [addresses.LensHub])
     await factory.deployed()
     await expect(factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)).to.be.revertedWith(
       RevertReasons.RaceNftAddressEmpty,
@@ -141,7 +144,7 @@ describe('Lensrace', function() {
     // Give profile an extra follow to reach 100
     await impersonateAccount(RANDOM_LENS_PROFILE_OWNER)
     const profileOwner = await ethers.getSigner(RANDOM_LENS_PROFILE_OWNER)
-    const lensHub = ILensHub__factory.connect(LENSHUB_ADDRESS, profileOwner)
+    const lensHub = ILensHub__factory.connect(addresses.LensHub!, profileOwner)
     await lensHub.follow([LENS_PROFILE_ID_99_FOLLOWERS], [[]])
 
     // Race settling should go through and declare profile
