@@ -15,6 +15,7 @@ module.exports = {
         },
       },
       fontFamily: {
+        mono: ['Inconsolata', ...defaultTheme.fontFamily.mono],
         sans: ['Public Sans', ...defaultTheme.fontFamily.sans],
       },
     },
