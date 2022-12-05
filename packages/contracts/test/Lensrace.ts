@@ -55,6 +55,8 @@ describe('Lensrace', function() {
     expect(await factory.racesLength()).to.equal(1)
     const latestRace = await factory.races(0)
     expect(raceAddress).to.equal(latestRace)
+    const races = await factory.getRaces()
+    expect(races).to.deep.equal([raceAddress])
   })
 
   it('it should be possible to initialize a race only once', async () => {
@@ -67,6 +69,12 @@ describe('Lensrace', function() {
   it('it should not deploy a race with nonexistent profile-ids', async () => {
     await expect(factory.deployRace([994, 1239291391391239], '', 100)).to.be.revertedWith(
       RevertReasons.NotAllProfileIdsExist,
+    )
+  })
+
+  it('it should not deploy a race with already fulfilled goal', async () => {
+    await expect(factory.deployRace([994], '', 99)).to.be.revertedWith(
+      RevertReasons.RaceCanBeSettledOnInit,
     )
   })
 
