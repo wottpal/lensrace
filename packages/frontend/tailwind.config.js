@@ -13,13 +13,6 @@ module.exports = {
           twitter: '#1DA1F2',
           discord: '#EB459E',
         },
-        // primary: '#4bc951',
-        secondary: {
-          // 1: '#cbeecc',
-          // 2: '#8ec2a2',
-          // 3: '#6ea680',
-          4: '#006a5c',
-        },
       },
       fontFamily: {
         sans: ['Public Sans', ...defaultTheme.fontFamily.sans],
