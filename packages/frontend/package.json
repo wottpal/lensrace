@@ -17,6 +17,7 @@
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.1",
     "@emotion/css": "^11.10.5",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
@@ -28,7 +29,9 @@
     "@rainbow-me/rainbowkit": "^0.8.0",
     "@tailwindcss/forms": "^0.5.3",
     "daisyui": "^2.42.1",
+    "dotenv-quokka-plugin": "^1.0.0",
     "ethers": "^5.7.2",
+    "graphql": "^16.6.0",
     "lodash.merge": "^4.6.2",
     "next": "^13.0.5",
     "next-seo": "^5.14.1",

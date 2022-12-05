@@ -1,7 +1,9 @@
+import { ApolloProvider } from '@apollo/client'
 import { BaseLayout } from '@components/layout/BaseLayout'
 import { HotToastConfig } from '@components/layout/HotToastConfig'
 import { cache } from '@emotion/css'
 import { CacheProvider } from '@emotion/react'
+import { lensClient } from '@libs/lensApi'
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { env } from '@shared/environment'
@@ -72,9 +74,11 @@ function MyApp({ Component, pageProps }: AppProps) {
               appName: 'lensrace.xyz',
             }}
           >
-            <BaseLayout>
-              <Component {...pageProps} />
-            </BaseLayout>
+            <ApolloProvider client={lensClient}>
+              <BaseLayout>
+                <Component {...pageProps} />
+              </BaseLayout>
+            </ApolloProvider>
           </RainbowKitProvider>
         </WagmiConfig>
 
