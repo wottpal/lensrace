@@ -12,6 +12,9 @@ export const RevertReasons = {
   RaceGoalNotReached: /goal not reached yet/i,
   RaceCanBeSettledOnInit: /can be settled on init/i,
 
+  // AccessControl
+  AccountIsMissingRole: /AccessControl: account (.*) is missing role (.*)/i,
+
   // LensraceVictoryNFT
   NFTTokenTransferBlocked: /token cannot be transferred/i,
 }

@@ -25,13 +25,14 @@ let raceNft: Contract
 let owner: SignerWithAddress
 let addr1: SignerWithAddress
 let addr2: SignerWithAddress
+let addr3: SignerWithAddress
 let addrs: SignerWithAddress[]
 
 /**
  * Test Initialization: Deploys `LensraceFactory` & `LensraceVictoryNFT`
  */
 beforeEach(async () => {
-  ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
+  ;[owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners()
   LensraceFactory = await ethers.getContractFactory('LensraceFactory')
   factory = await LensraceFactory.deploy(LENSHUB_ADDRESS)
   LensraceVictoryNFT = await ethers.getContractFactory('LensraceVictoryNFT')
@@ -59,8 +60,21 @@ describe('Lensrace', function() {
     expect(await factory.lensHub()).to.equals(LENSHUB_ADDRESS)
   })
 
+  it('it should not deploy factory without a given lenshub address', async () => {
+    await expect(LensraceFactory.deploy(constants.AddressZero)).to.be.revertedWith(
+      RevertReasons.LensHubAddressEmpty,
+    )
+  })
+
   it('it should not deploy a race with empty profileIds', async () => {
-    await expect(factory.deployRace([], '', 10)).to.be.revertedWith(RevertReasons.ProfileIdsEmpty)
+    await expect(factory.deployRace([], '', 100)).to.be.revertedWith(RevertReasons.ProfileIdsEmpty)
+  })
+
+  it('it should not deploy a race without the raceNft contract set', async () => {
+    const factory = await LensraceFactory.deploy(LENSHUB_ADDRESS)
+    await expect(factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)).to.be.revertedWith(
+      RevertReasons.RaceNftAddressEmpty,
+    )
   })
 
   it('it should correctly deploy & store a race', async () => {
@@ -127,11 +141,54 @@ describe('Lensrace', function() {
     await lensHub.follow([LENS_PROFILE_ID_99_FOLLOWERS], [[]])
 
     // Race settling should go through and declare profile
+    await expect(raceNft.ownerOf(0)).to.be.reverted
     await expect(race.settle({ gasLimit: 200000 + 25000 * profileIds.length }))
       .to.emit(race, 'RaceSettled')
       .withArgs(LENS_PROFILE_ID_99_FOLLOWERS, 100, OWNER_LENS_PROFILE_ID_99_FOLLOWERS, 0)
 
     expect(await race.hasSettled()).to.equal(true)
     expect(await race.winningProfileId()).to.equal(LENS_PROFILE_ID_99_FOLLOWERS)
+
+    // Check if victory nft was minted successfully
+    expect(await raceNft.ownerOf(0)).to.equal(OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
+  })
+
+  it('raceNft should successfully grant roles', async () => {
+    await expect(raceNft.connect(addr1).grantRaceRole(addr2.address)).to.be.revertedWith(
+      RevertReasons.AccountIsMissingRole,
+    )
+    await expect(raceNft.connect(addr1).grantFactoryRole(addr2.address)).to.be.revertedWith(
+      RevertReasons.AccountIsMissingRole,
+    )
+    await expect(raceNft.connect(addr2).safeMint(addr3.address)).to.be.revertedWith(
+      RevertReasons.AccountIsMissingRole,
+    )
+    await expect(raceNft.connect(owner).grantFactoryRole(addr1.address)).not.to.be.reverted
+    await expect(raceNft.connect(addr1).grantRaceRole(addr2.address)).not.to.be.reverted
+    await expect(raceNft.connect(addr2).grantRaceRole(addr2.address)).to.be.revertedWith(
+      RevertReasons.AccountIsMissingRole,
+    )
+    await expect(raceNft.connect(addr2).safeMint(addr3.address)).not.to.be.reverted
+    await expect(raceNft.connect(addr1).safeMint(addr3.address)).to.be.revertedWith(
+      RevertReasons.AccountIsMissingRole,
+    )
+  })
+
+  it('raceNft should correctly set baseUri', async () => {
+    await raceNft.connect(owner).grantFactoryRole(owner.address)
+    await raceNft.connect(owner).grantRaceRole(owner.address)
+    await expect(raceNft.safeMint(addr1.address))
+      .to.emit(raceNft, 'VictoryMinted')
+      .withArgs(addr1.address, 0)
+
+    expect(await raceNft.tokenURI(0)).to.be.empty
+    const SAMPLE_BASE_URI = 'https://bla.com/'
+    await raceNft.setBaseURI(SAMPLE_BASE_URI)
+    expect(await raceNft.tokenURI(0)).to.equal(`${SAMPLE_BASE_URI}0`)
+  })
+
+  it('raceNft should support erc721 interface', async () => {
+    expect(await raceNft.supportsInterface('0x80ac58cd')).to.equal(true)
+    expect(await raceNft.supportsInterface('0xffffffff')).to.equal(false)
   })
 })
