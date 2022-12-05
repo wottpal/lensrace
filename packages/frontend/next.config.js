@@ -6,15 +6,7 @@
  **/
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'media.lenster.xyz',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    domains: ['images.unsplash.com', 'media.lenster.xyz'],
   },
 }
 
