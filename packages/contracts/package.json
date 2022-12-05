@@ -8,6 +8,7 @@
     "dev": "pnpm run build && pnpm run deploy",
     "build": "pnpm clean && pnpm compile",
     "test": "pnpm hardhat compile && pnpm hardhat test",
+    "coverage": "pnpm hardhat coverage",
     "report-gas": "REPORT_GAS=true pnpm test",
     "start": "pnpm run deploy",
     "types": "pnpm typechain --target=ethers-v5 './artifacts/contracts/**/+([a-zA-Z0-9_]).json' --out-dir './typechain-types'",
