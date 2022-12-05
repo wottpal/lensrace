@@ -14,7 +14,7 @@ const LENSHUB_ADDRESS = getAddress('0xdb46d1dc155634fbc732f92e853b10b288ad5a1d')
 const RANDOM_LENS_PROFILE_OWNER = getAddress('0xc86cd9f65300189019f6ac1bf90422e45f524cfb')
 
 let LensraceFactory: ContractFactory
-let contract: Contract
+let factory: Contract
 let owner: SignerWithAddress
 let addr1: SignerWithAddress
 let addr2: SignerWithAddress
@@ -27,15 +27,15 @@ let addrs: SignerWithAddress[]
 beforeEach(async () => {
   ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
   LensraceFactory = await ethers.getContractFactory('LensraceFactory')
-  contract = await LensraceFactory.deploy(LENSHUB_ADDRESS)
+  factory = await LensraceFactory.deploy(LENSHUB_ADDRESS)
 })
 
-describe('Lensrace', function () {
+describe('Lensrace', function() {
   const deployRace = async (profileIds: number[], raceName: string, followerGoal: number) => {
-    const deployRaceTx = await contract.deployRace(profileIds, raceName, followerGoal)
+    const deployRaceTx = await factory.deployRace(profileIds, raceName, followerGoal)
     let raceAddress = constants.AddressZero
     await expect(deployRaceTx)
-      .to.emit(contract, 'RaceDeployed')
+      .to.emit(factory, 'RaceDeployed')
       .withArgs((_raceAddress: string) => {
         raceAddress = _raceAddress
         return true
@@ -46,19 +46,26 @@ describe('Lensrace', function () {
   }
 
   it('it should have the correct lenshub address', async () => {
-    expect(await contract.lensHub()).to.equals(LENSHUB_ADDRESS)
+    expect(await factory.lensHub()).to.equals(LENSHUB_ADDRESS)
   })
 
   it('it should correctly deploy & store a race', async () => {
-    expect(await contract.racesLength()).to.equal(0)
+    expect(await factory.racesLength()).to.equal(0)
     const { raceAddress } = await deployRace([], '', 0)
-    expect(await contract.racesLength()).to.equal(1)
-    const latestRace = await contract.races(0)
+    expect(await factory.racesLength()).to.equal(1)
+    const latestRace = await factory.races(0)
     expect(raceAddress).to.equal(latestRace)
   })
 
+  it('it should be possible to initialize a race only once', async () => {
+    const { race } = await deployRace([], '', 0)
+    await expect(race.init(factory.address, [], '', 0)).to.be.revertedWith(
+      RevertReasons.ContractAlreadyInitialized,
+    )
+  })
+
   it('it should not deploy a race with nonexistent profile-ids', async () => {
-    await expect(contract.deployRace([994, 1239291391391239], '', 100)).to.be.revertedWith(
+    await expect(factory.deployRace([994, 1239291391391239], '', 100)).to.be.revertedWith(
       RevertReasons.NotAllProfileIdsExist,
     )
   })
@@ -70,7 +77,7 @@ describe('Lensrace', function () {
     const { race } = await deployRace(profileIds, raceName, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
     expect(await race.followerGoal()).to.equal(followerGoal)
-    expect(await race.getProfileIds()).to.deep.equal(profileIds.map((id) => BigNumber.from(id)))
+    expect(await race.getProfileIds()).to.deep.equal(profileIds.map(id => BigNumber.from(id)))
   })
 
   it('it should not settle before reached goal', async () => {

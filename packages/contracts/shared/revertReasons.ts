@@ -1,9 +1,11 @@
-export const enum RevertReasons {
+export const RevertReasons = {
+  // Initializable
+  ContractAlreadyInitialized: /contract is already initialized/i,
+
   // LensraceFactory
-  NotAllProfileIdsExist = 'not all given profile-ids exist',
+  NotAllProfileIdsExist: /not all given profile-ids exist/i,
 
   // Lensrace
-  RaceAlreadyInitialized = 'already initialized',
-  RaceGoalNotReached = 'goal not reached yet',
-  RaceCanBeSettledOnInit = 'can be settled on init',
+  RaceGoalNotReached: /goal not reached yet/i,
+  RaceCanBeSettledOnInit: /can be settled on init/i,
 }

@@ -3,8 +3,9 @@ pragma solidity ^0.8.10;
 
 import {LensraceFactory} from "./LensraceFactory.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Lensrace {
+contract Lensrace is Initializable {
     event RaceSettled(uint256 indexed winnerProfileId, uint256 indexed winnerFollowerCount);
 
     LensraceFactory public factory;
@@ -13,7 +14,7 @@ contract Lensrace {
     string public raceName;
     uint256 public followerGoal;
 
-    bool public hasSettled = false;
+    bool public hasSettled;
     uint256 public winningProfileId;
     uint256 public winningFollowerCount;
 
@@ -30,9 +31,8 @@ contract Lensrace {
         uint256[] memory _profileIds,
         string memory _raceName,
         uint256 _followerGoal
-    ) external {
-        require(address(factory) == address(0), "already initialized");
-
+    ) external initializer {
+        hasSettled = false;
         factory = LensraceFactory(_factory);
         profileIds = _profileIds;
         raceName = _raceName;
