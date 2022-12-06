@@ -6,6 +6,7 @@ import { InputComboBox } from '@components/shared/InputCombobox'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
@@ -24,6 +25,11 @@ export type FormInputs = {
   raceName: string
   followerGoal: number
   profileIds: number[]
+}
+
+export type Profile = {
+  profileId: string
+  handle: string
 }
 
 const HomePage: NextPage = () => {
@@ -45,6 +51,12 @@ const HomePage: NextPage = () => {
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
+  const [lensHandle, setLensHandle] = useState<Profile | null>(null)
+  const [raceParticiants, setRaceParticiants] = useState<Profile[] | null>(null)
+
+  console.log({ lensHandle })
+  console.log({ raceParticiants })
+
   return (
     <>
       <CenterBody>
@@ -58,9 +70,20 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputComboBox disabled={disabled} />
+          <InputComboBox
+            disabled={disabled}
+            multi={false}
+            selectedProfile={lensHandle}
+            setSelectedProfile={setLensHandle}
+          />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
+          <InputComboBox
+            disabled={disabled}
+            multi={true}
+            selectedProfile={raceParticiants}
+            setSelectedProfile={setRaceParticiants}
+          />
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />
           <Input
