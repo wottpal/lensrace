@@ -1,20 +1,8 @@
 // page that prints out javascript
 
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import { GET_PROFILE_BY_HANDLE_QUERY } from '@shared/lensApiQueries'
 import { NextPage } from 'next'
-
-const GET_PROFILE_BY_HANDLE_QUERY = gql`
-  query Profile($handle: Handle!) {
-    profile(request: { handle: $handle }) {
-      id
-      name
-      handle
-      stats {
-        totalFollowers
-      }
-    }
-  }
-`
 
 const Test: NextPage = () => {
   const { data, loading, error } = useQuery(GET_PROFILE_BY_HANDLE_QUERY, {
