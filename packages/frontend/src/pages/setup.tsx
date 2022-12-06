@@ -12,7 +12,6 @@ import 'twin.macro'
 import tw from 'twin.macro'
 import { useAccount, useNetwork } from 'wagmi'
 import * as yup from 'yup'
-import { env } from '../shared/environment'
 
 const schema = yup
   .object({
@@ -30,12 +29,17 @@ export type FormInputs = {
 export type Profile = {
   profileId: string
   handle: string
+  picture: {
+    original: {
+      url: string
+    }
+  }
 }
 
 const HomePage: NextPage = () => {
   const { isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
-  const disabled = isDisconnected || chain?.id !== env.defaultChain
+  const disabled = isDisconnected || !!chain?.unsupported
 
   // console.log({ disabled })
   // console.log({ isDisconnected })
@@ -51,8 +55,8 @@ const HomePage: NextPage = () => {
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
-  const [lensHandle, setLensHandle] = useState<Profile | null>(null)
-  const [raceParticiants, setRaceParticiants] = useState<Profile[] | null>(null)
+  const [lensHandle, setLensHandle] = useState<Profile>()
+  const [raceParticiants, setRaceParticiants] = useState<Profile[]>()
 
   console.log({ lensHandle })
   console.log({ raceParticiants })
@@ -73,16 +77,19 @@ const HomePage: NextPage = () => {
           <InputComboBox
             disabled={disabled}
             multi={false}
-            selectedProfile={lensHandle}
-            setSelectedProfile={setLensHandle}
+            selectedProfiles={lensHandle ? [lensHandle] : []}
+            setSelectedProfiles={(profiles) => {
+              console.log('here', profiles)
+              setLensHandle(profiles?.[0])
+            }}
           />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
             disabled={disabled}
             multi={true}
-            selectedProfile={raceParticiants}
-            setSelectedProfile={setRaceParticiants}
+            selectedProfiles={raceParticiants || []}
+            setSelectedProfiles={setRaceParticiants}
           />
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />

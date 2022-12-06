@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Profile } from '@pages/setup'
+import Image from 'next/image'
 import { FC } from 'react'
 import 'twin.macro'
 import tw from 'twin.macro'
@@ -14,15 +15,15 @@ import tw from 'twin.macro'
 export interface InputComboBoxProps {
   disabled: boolean
   multi: boolean
-  selectedProfile: Profile | Profile[] | null
-  setSelectedProfile: (profile: Profile) => void
+  selectedProfiles: Profile[]
+  setSelectedProfiles: (_: Profile[]) => void
 }
 
 export const InputComboBox: FC<InputComboBoxProps> = ({
   disabled,
   multi,
-  selectedProfile,
-  setSelectedProfile,
+  selectedProfiles,
+  setSelectedProfiles,
 }) => {
   const [query, setQuery] = useState('')
 
@@ -48,15 +49,13 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
   }, [query])
 
   // A function that sets profiles based on onchange event
-  const handleSelectedProfile = (profile: Profile) => {
-    console.log({ profile })
+  const handleSelectedProfiles = (profiles: Profile[]) => {
     if (multi) {
-      const profiles = selectedProfile !== null ? selectedProfile : ([] as Profile[])
-      const newProfiles = [...profiles, profile]
-      setSelectedProfile(newProfiles)
+      const newProfiles = [...(selectedProfiles || []), ...profiles]
+      setSelectedProfiles(newProfiles)
       setQuery('')
     } else {
-      setSelectedProfile(profile)
+      setSelectedProfiles(profiles)
     }
   }
 
@@ -64,8 +63,8 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
     <>
       <Combobox
         as="div"
-        value={selectedProfile}
-        onChange={handleSelectedProfile}
+        value={selectedProfiles}
+        onChange={handleSelectedProfiles}
         disabled={disabled}
       >
         <div tw="relative mt-1">
@@ -88,10 +87,12 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
               {data?.['search']?.['items'].map((profile: Profile) => (
                 <Combobox.Option
                   key={profile?.profileId}
-                  value={profile}
+                  value={[profile]}
                   css={[
                     tw`relative cursor-default select-none py-2 pl-3 pr-9`,
-                    profile === selectedProfile ? tw`bg-primary text-white` : tw`text-gray-900`,
+                    (selectedProfiles || []).includes(profile)
+                      ? tw`bg-primary text-white`
+                      : tw`text-gray-900`,
                   ]}
                   // tw="relative cursor-default select-none bg-primary py-2 pl-3 pr-9 text-white"
                   // className={({ active }) =>
@@ -105,13 +106,16 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
                     <>
                       <div tw="flex items-center">
                         {/* TODO: In lens test env there are many different urls so not sure if we can grap profile pic */}
-                        <img
-                          src={profile?.picture?.original?.url}
-                          width={50}
-                          height={50}
-                          alt=""
-                          tw="h-6 w-6 shrink-0 rounded-full"
-                        />
+                        {!!profile?.picture?.original?.url &&
+                          profile.picture.original.url.startsWith('https://') && (
+                            <Image
+                              src={profile.picture.original.url}
+                              width={50}
+                              height={50}
+                              alt={`Profile picture of @${profile.handle}`}
+                              tw="h-6 w-6 shrink-0 rounded-full"
+                            />
+                          )}
                         <span css={[tw`ml-3 truncate`, selected && tw`font-semibold`]}>
                           {profile?.handle}
                         </span>
@@ -135,27 +139,33 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
           )}
         </div>
       </Combobox>
+
       {/* List of selected profiles if multi is true */}
-      {multi && selectedProfile && (
+      {multi && !!selectedProfiles?.length && (
         <div tw="mt-4">
-          {selectedProfile.map((profile: Profile) => (
+          {selectedProfiles.map((profile: Profile) => (
             <div key={profile?.profileId} tw="py-2">
               <div tw="flex items-center">
-                <img
-                  src={profile?.picture?.original?.url}
-                  width={50}
-                  height={50}
-                  alt=""
-                  tw="h-10 w-10 shrink-0 rounded-full object-contain"
-                />
+                {!!profile?.picture?.original?.url &&
+                  profile.picture.original.url.startsWith('https://') && (
+                    <Image
+                      src={profile.picture.original.url}
+                      width={50}
+                      height={50}
+                      alt={`Profile picture of @${profile.handle}`}
+                      tw="h-10 w-10 shrink-0 rounded-full object-contain"
+                    />
+                  )}
                 <span tw="ml-8 truncate font-semibold">@{profile?.handle}</span>
-                {/* Button to remove the pfoile from selectedProfile */}
+                {/* Button to remove the profile from selectedProfile */}
                 <button
                   tw="ml-4 text-primary hover:text-primary/80"
                   onClick={() => {
-                    const profiles = selectedProfile !== null ? selectedProfile : ([] as Profile[])
-                    const newProfiles = profiles.filter((p) => p?.profileId !== profile?.profileId)
-                    setSelectedProfile(newProfiles)
+                    if (!selectedProfiles?.length) return
+                    const newProfiles = selectedProfiles.filter(
+                      (p) => p?.profileId !== profile?.profileId,
+                    )
+                    setSelectedProfiles(newProfiles)
                   }}
                 >
                   <XMarkIcon tw="h-5 w-5 rounded-full" aria-hidden="true" />
