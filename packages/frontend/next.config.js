@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 // @ts-check
 
 /**
  * @type {import('next').NextConfig}
  **/
-const nextConfig = {
+let nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -15,7 +16,10 @@ const nextConfig = {
   },
 }
 
-// eslint-disable-next-line
-const withTM = require('next-transpile-modules')(['@lensrace/contracts'])
+const withTwin = require('./withTwin.js')
+nextConfig = withTwin(nextConfig)
 
-module.exports = withTM(nextConfig)
+const withTM = require('next-transpile-modules')(['@lensrace/contracts'])
+nextConfig = withTM(nextConfig)
+
+module.exports = nextConfig
