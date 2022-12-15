@@ -3,6 +3,7 @@ import { DividerHeading } from '@components/shared/DividerHeading'
 import { Hero } from '@components/shared/Hero'
 import { Input } from '@components/shared/Input'
 import { InputComboBox } from '@components/shared/InputCombobox'
+import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
@@ -15,12 +16,14 @@ import * as yup from 'yup'
 
 const schema = yup
   .object({
+    lensHandle: yup.string().required(),
     raceName: yup.string().required(),
     followerGoal: yup.number().positive().integer().required(),
   })
   .required()
 
 export type FormInputs = {
+  lensHandle: string
   raceName: string
   followerGoal: number
   profileIds: number[]
@@ -49,17 +52,18 @@ const HomePage: NextPage = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: yupResolver(schema),
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
-  const [lensHandle, setLensHandle] = useState<Profile>()
   const [raceParticiants, setRaceParticiants] = useState<Profile[]>()
 
-  console.log({ lensHandle })
   console.log({ raceParticiants })
+  console.log({ errors })
+  console.log('watch', watch())
 
   return (
     <>
@@ -74,15 +78,7 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputComboBox
-            disabled={disabled}
-            multi={false}
-            selectedProfiles={lensHandle ? [lensHandle] : []}
-            setSelectedProfiles={(profiles) => {
-              console.log('here', profiles)
-              setLensHandle(profiles?.[0])
-            }}
-          />
+          <InputSelect name="lensHandle" control={control} rules={{ required: true }} />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox

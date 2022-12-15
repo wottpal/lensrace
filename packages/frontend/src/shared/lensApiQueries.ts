@@ -13,6 +13,41 @@ export const GET_PROFILE_BY_HANDLE_QUERY = gql`
   }
 `
 
+export const GET_PROFILE_BY_WALLET_QUERY = gql`
+  query Profiles($request: ProfileQueryRequest!) {
+    profiles(request: $request) {
+      items {
+        id
+        name
+        picture {
+          ... on NftImage {
+            contractAddress
+            tokenId
+            uri
+            verified
+          }
+          ... on MediaSet {
+            original {
+              url
+              mimeType
+            }
+          }
+          __typename
+        }
+        handle
+        stats {
+          totalFollowers
+        }
+      }
+      pageInfo {
+        prev
+        next
+        totalCount
+      }
+    }
+  }
+`
+
 export const SEARCH_PROFILES_BY_HANDLE = gql`
   query Search($request: SearchQueryRequest!) {
     search(request: $request) {
