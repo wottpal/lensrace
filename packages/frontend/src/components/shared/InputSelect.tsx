@@ -154,6 +154,15 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
         )}
       </Listbox>
       {errors['lensHandle'] && <p tw="mt-2 text-xs text-error">{errors['lensHandle'].message}</p>}
+      {profilesData?.profiles?.items.length === 0 && (
+        <p tw="mt-2 text-xs text-error">
+          You do not have any Lens Handles. Please claim one{' '}
+          <a href="https://claim.lens.xyz/" target={'_blank'} tw="text-primary underline">
+            here
+          </a>{' '}
+          or connect a wallet with a handle.
+        </p>
+      )}
     </>
   )
 }
