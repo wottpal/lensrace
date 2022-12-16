@@ -31,8 +31,8 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
       request: {
         ownedBy: [
           // Test address with data
-          '0x52EAF3F04cbac0a4B9878A75AB2523722325D4D4',
-          // address,
+          // '0x52EAF3F04cbac0a4B9878A75AB2523722325D4D4',
+          address,
         ],
         limit: 10,
       },
@@ -43,7 +43,7 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
 
   return (
     <>
-      <Listbox value={value} onChange={onChange}>
+      <Listbox value={value} as="div" onChange={onChange}>
         {({ open }) => (
           <>
             <div tw="relative mt-1">
@@ -153,6 +153,7 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
           </>
         )}
       </Listbox>
+      {errors['lensHandle'] && <p tw="mt-2 text-xs text-error">{errors['lensHandle'].message}</p>}
     </>
   )
 }

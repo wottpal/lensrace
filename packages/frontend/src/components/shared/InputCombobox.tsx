@@ -71,12 +71,14 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
           <Combobox.Input
             css={[
               tw`w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
-              errors[props?.name] && tw`border-error pr-10 focus:(border-error ring-error)`,
+              errors[props?.name] &&
+                tw`border-error pr-10 placeholder:text-error focus:(border-error ring-error)`,
               disabled &&
                 tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
             ]}
             // tw="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
             onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search race participants"
             displayValue={(profile: Profile) => profile?.handle}
           />
           <Combobox.Button tw="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">

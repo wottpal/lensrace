@@ -84,10 +84,6 @@ const HomePage: NextPage = () => {
             control={control}
             rules={{ required: true }}
           />
-          {/* TODO: Wanted to put this into the component but doesn't work... */}
-          {errors['lensHandle'] && (
-            <p tw="mt-2 text-xs text-error">{errors['lensHandle'].message}</p>
-          )}
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
