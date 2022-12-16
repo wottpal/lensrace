@@ -16,14 +16,14 @@ import * as yup from 'yup'
 
 const schema = yup
   .object({
-    lensHandle: yup.string().required(),
+    lensHandle: yup.object().required(),
     raceName: yup.string().required(),
     followerGoal: yup.number().positive().integer().required(),
   })
   .required()
 
 export type FormInputs = {
-  lensHandle: string
+  lensHandle: any
   raceName: string
   followerGoal: number
   profileIds: number[]
@@ -42,7 +42,7 @@ export type Profile = {
 const HomePage: NextPage = () => {
   const { isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
-  const disabled = isDisconnected || !!chain?.unsupported
+  const disabled = false // isDisconnected || !!chain?.unsupported
 
   // console.log({ disabled })
   // console.log({ isDisconnected })
@@ -64,6 +64,7 @@ const HomePage: NextPage = () => {
   console.log({ raceParticiants })
   console.log({ errors })
   console.log('watch', watch())
+  console.log({ disabled })
 
   return (
     <>
@@ -78,7 +79,16 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputSelect name="lensHandle" control={control} rules={{ required: true }} />
+          <InputSelect
+            name="lensHandle"
+            errors={errors}
+            control={control}
+            rules={{ required: true }}
+          />
+          {/* TODO: Wanted to put this into the component but doesn't work... */}
+          {errors['lensHandle'] && (
+            <p tw="mt-2 text-xs text-error">{errors['lensHandle'].message}</p>
+          )}
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
