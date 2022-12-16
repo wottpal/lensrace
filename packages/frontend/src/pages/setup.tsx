@@ -7,7 +7,6 @@ import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
-import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
@@ -17,6 +16,7 @@ import * as yup from 'yup'
 const schema = yup
   .object({
     lensHandle: yup.object().required(),
+    raceParticipants: yup.array().of(yup.object()).min(1).required(),
     raceName: yup.string().required(),
     followerGoal: yup.number().positive().integer().required(),
   })
@@ -52,16 +52,15 @@ const HomePage: NextPage = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     control,
+    clearErrors,
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: yupResolver(schema),
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
-  const [raceParticiants, setRaceParticiants] = useState<Profile[]>()
-
-  console.log({ raceParticiants })
   console.log({ errors })
   console.log('watch', watch())
   console.log({ disabled })
@@ -92,10 +91,13 @@ const HomePage: NextPage = () => {
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
+            name="raceParticipants"
+            errors={errors}
+            clearErrors={clearErrors}
+            control={control}
+            setValue={setValue}
+            rules={{ required: true, min: 1 }}
             disabled={disabled}
-            multi={true}
-            selectedProfiles={raceParticiants || []}
-            setSelectedProfiles={setRaceParticiants}
           />
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />

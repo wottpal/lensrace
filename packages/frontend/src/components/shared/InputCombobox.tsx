@@ -9,22 +9,24 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Profile } from '@pages/setup'
 import Image from 'next/image'
 import { FC } from 'react'
+import { useController, UseControllerProps } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
 
 export interface InputComboBoxProps {
-  disabled: boolean
-  multi: boolean
-  selectedProfiles: Profile[]
-  setSelectedProfiles: (_: Profile[]) => void
+  errors: any
+  setValue: any
 }
 
-export const InputComboBox: FC<InputComboBoxProps> = ({
-  disabled,
-  multi,
-  selectedProfiles,
-  setSelectedProfiles,
-}) => {
+export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
+  props: InputComboBoxProps & UseControllerProps,
+) => {
+  const {
+    field: { value, onChange },
+  } = useController(props)
+
+  const { errors, setValue, disabled, clearErrors } = props
+
   const [query, setQuery] = useState('')
 
   const [search, { data, loading, error }] = useLazyQuery(SEARCH_PROFILES_BY_HANDLE)
@@ -50,27 +52,26 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
 
   // A function that sets profiles based on onchange event
   const handleSelectedProfiles = (profiles: Profile[]) => {
-    if (multi) {
-      const newProfiles = [...(selectedProfiles || []), ...profiles]
-      setSelectedProfiles(newProfiles)
-      setQuery('')
-    } else {
-      setSelectedProfiles(profiles)
-    }
+    const newProfiles = [...(value || []), ...profiles]
+    setValue('raceParticipants', newProfiles)
+    console.log('Clearing errors...')
+    clearErrors('raceParticipants')
+    setQuery('')
   }
 
   return (
     <>
       <Combobox
         as="div"
-        value={selectedProfiles}
+        value={value}
         onChange={handleSelectedProfiles}
-        disabled={disabled}
+        // disabled={disabled}
       >
         <div tw="relative mt-1">
           <Combobox.Input
             css={[
               tw`w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
+              errors[props?.name] && tw`border-error pr-10 focus:(border-error ring-error)`,
               disabled &&
                 tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
             ]}
@@ -90,9 +91,7 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
                   value={[profile]}
                   css={[
                     tw`relative cursor-default select-none py-2 pl-3 pr-9`,
-                    (selectedProfiles || []).includes(profile)
-                      ? tw`bg-primary text-white`
-                      : tw`text-gray-900`,
+                    (value || []).includes(profile) ? tw`bg-primary text-white` : tw`text-gray-900`,
                   ]}
                   // tw="relative cursor-default select-none bg-primary py-2 pl-3 pr-9 text-white"
                   // className={({ active }) =>
@@ -141,9 +140,9 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
       </Combobox>
 
       {/* List of selected profiles if multi is true */}
-      {multi && !!selectedProfiles?.length && (
+      {!!value?.length && (
         <div tw="mt-4">
-          {selectedProfiles.map((profile: Profile) => (
+          {value.map((profile: Profile) => (
             <div key={profile?.profileId} tw="py-2">
               <div tw="flex items-center">
                 {!!profile?.picture?.original?.url &&
@@ -161,11 +160,9 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
                 <button
                   tw="ml-4 text-primary hover:text-primary/80"
                   onClick={() => {
-                    if (!selectedProfiles?.length) return
-                    const newProfiles = selectedProfiles.filter(
-                      (p) => p?.profileId !== profile?.profileId,
-                    )
-                    setSelectedProfiles(newProfiles)
+                    if (!value?.length) return
+                    const newProfiles = value.filter((p) => p?.profileId !== profile?.profileId)
+                    setValue('raceParticipants', newProfiles)
                   }}
                 >
                   <XMarkIcon tw="h-5 w-5 rounded-full" aria-hidden="true" />
@@ -175,6 +172,7 @@ export const InputComboBox: FC<InputComboBoxProps> = ({
           ))}
         </div>
       )}
+      {errors[props?.name] && <p tw="mt-2 text-xs text-error">{errors[props?.name].message}</p>}
     </>
   )
 }
