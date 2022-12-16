@@ -12,6 +12,7 @@ import { useController, UseControllerProps } from 'react-hook-form'
 import 'twin.macro'
 
 export interface InputSelectProps {
+  disabled: boolean
   errors: any
 }
 
@@ -20,7 +21,7 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
     field: { value, onChange },
   } = useController(props)
 
-  const { errors } = props
+  const { errors, disabled } = props
   const { address, isConnected } = useAccount()
   const {
     loading: profilesLoading,
@@ -43,7 +44,7 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
 
   return (
     <>
-      <Listbox value={value} as="div" onChange={onChange}>
+      <Listbox disabled={disabled} value={value} as="div" onChange={onChange}>
         {({ open }) => (
           <>
             <div tw="relative mt-1">
@@ -51,6 +52,8 @@ export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
                 // tw="relative w-full cursor-default rounded-lg border border-primary bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
                 css={[
                   tw`relative w-full cursor-default rounded-lg border border-primary bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm`,
+                  disabled &&
+                    tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm`,
                   errors?.lensHandle &&
                     tw`border-error pr-10 text-error placeholder-error focus:(border-error ring-error)`,
                 ]}

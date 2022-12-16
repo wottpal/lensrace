@@ -14,6 +14,8 @@ import 'twin.macro'
 import tw from 'twin.macro'
 
 export interface InputComboBoxProps {
+  disabled: boolean
+  clearErrors: any
   errors: any
   setValue: any
 }
@@ -61,20 +63,15 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
 
   return (
     <>
-      <Combobox
-        as="div"
-        value={value}
-        onChange={handleSelectedProfiles}
-        // disabled={disabled}
-      >
+      <Combobox as="div" value={value} onChange={handleSelectedProfiles} disabled={disabled}>
         <div tw="relative mt-1">
           <Combobox.Input
             css={[
               tw`w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
-              errors[props?.name] &&
-                tw`border-error pr-10 placeholder:text-error focus:(border-error ring-error)`,
               disabled &&
                 tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
+              errors[props?.name] &&
+                tw`border-error pr-10 placeholder:text-error focus:(border-error ring-error)`,
             ]}
             // tw="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
             onChange={(event) => setQuery(event.target.value)}

@@ -42,11 +42,10 @@ export type Profile = {
 const HomePage: NextPage = () => {
   const { isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
-  const disabled = false // isDisconnected || !!chain?.unsupported
+  const disabled = isDisconnected || !!chain?.unsupported
 
-  // console.log({ disabled })
-  // console.log({ isDisconnected })
-  // console.log('Test', chain?.id === env.defaultChain)
+  console.log({ disabled })
+  console.log('chainUnsupported: ', !!chain?.unsupported)
 
   const {
     register,
@@ -79,6 +78,7 @@ const HomePage: NextPage = () => {
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
           <InputSelect
+            disabled={disabled}
             name="lensHandle"
             errors={errors}
             control={control}
@@ -87,21 +87,21 @@ const HomePage: NextPage = () => {
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
+            disabled={disabled}
             name="raceParticipants"
             errors={errors}
             clearErrors={clearErrors}
             control={control}
             setValue={setValue}
             rules={{ required: true, min: 1 }}
-            disabled={disabled}
           />
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />
           <Input
+            disabled={disabled}
             placeholder="Awesome race"
             input="text"
             registerId="raceName"
-            disabled={disabled}
             register={register}
             errors={errors}
           />
@@ -109,10 +109,10 @@ const HomePage: NextPage = () => {
           {/* Set Follower Goal */}
           <DividerHeading title="Set Absolute Follower Goal" />
           <Input
+            disabled={disabled}
             placeholder="100"
             input="number"
             registerId="followerGoal"
-            disabled={disabled}
             register={register}
             errors={errors}
           />
@@ -121,9 +121,12 @@ const HomePage: NextPage = () => {
           {/* TODO: Refactor button */}
           <div tw="flex flex-col items-center">
             <button
-              type="submit"
               disabled={disabled}
-              tw="btn btn-primary btn-wide my-6 rounded-full border-primary bg-primary font-bold font-mono text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)"
+              type="submit"
+              css={[
+                tw`btn btn-primary btn-wide my-6 rounded-full border-primary bg-primary font-bold font-mono text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)`,
+                disabled && tw`border-primary/20 bg-primary/20`,
+              ]}
             >
               Start Race
             </button>

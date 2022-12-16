@@ -4,10 +4,10 @@ import 'twin.macro'
 import tw from 'twin.macro'
 
 export interface InputProps {
+  disabled: boolean
   placeholder: string
   input: string
   registerId: string
-  disabled: boolean
   register: any
   errors: any
 }
@@ -34,7 +34,7 @@ export const Input: FC<InputProps> = ({
           css={[
             tw`block w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
             disabled &&
-              tw`text-base-content/20 shadow-sm placeholder:text-base-content/20 disabled:(cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/5)`,
+              tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
             errors[registerId] &&
               tw`border-error pr-10 text-error placeholder-error focus:(border-error ring-error)`,
           ]}
