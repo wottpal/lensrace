@@ -40,13 +40,13 @@ export type Profile = {
 }
 
 const HomePage: NextPage = () => {
-  const { isConnected, isDisconnected } = useAccount()
+  // Disabled state for forms
+  const { isDisconnected } = useAccount()
   const { chain } = useNetwork()
+
   const disabled = isDisconnected || !!chain?.unsupported
 
-  console.log({ disabled })
-  console.log('chainUnsupported: ', !!chain?.unsupported)
-
+  // React Form state Management
   const {
     register,
     handleSubmit,
@@ -60,9 +60,10 @@ const HomePage: NextPage = () => {
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
-  console.log({ errors })
-  console.log('watch', watch())
-  console.log({ disabled })
+  // console.log({ errors })
+  // console.log('watch', watch())
+  // console.log({ disabled })
+  // console.log('chainUnsupported: ', !!chain?.unsupported)
 
   return (
     <>
@@ -77,13 +78,7 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputSelect
-            disabled={disabled}
-            name="lensHandle"
-            errors={errors}
-            control={control}
-            rules={{ required: true }}
-          />
+          <InputSelect disabled={disabled} name="lensHandle" errors={errors} control={control} />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
@@ -93,7 +88,6 @@ const HomePage: NextPage = () => {
             clearErrors={clearErrors}
             control={control}
             setValue={setValue}
-            rules={{ required: true, min: 1 }}
           />
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />

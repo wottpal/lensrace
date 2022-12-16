@@ -3,7 +3,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { GET_PROFILE_BY_WALLET_QUERY } from '@shared/lensApiQueries'
 import Image from 'next/image'
-import { Fragment } from 'react'
+import { FC, Fragment } from 'react'
 import 'twin.macro'
 import tw from 'twin.macro'
 import { useAccount } from 'wagmi'
@@ -16,13 +16,15 @@ export interface InputSelectProps {
   errors: any
 }
 
-export const InputSelect = (props: InputSelectProps & UseControllerProps) => {
+export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
+  props: InputSelectProps & UseControllerProps,
+) => {
   const {
     field: { value, onChange },
   } = useController(props)
 
   const { errors, disabled } = props
-  const { address, isConnected } = useAccount()
+  const { address } = useAccount()
   const {
     loading: profilesLoading,
     error: profilesError,
