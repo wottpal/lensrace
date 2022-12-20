@@ -45,7 +45,12 @@ export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disa
 
   return (
     <>
-      <Listbox disabled={disabled} value={value as LensProfile} as="div" onChange={onChange}>
+      <Listbox
+        disabled={disabled || profilesData?.profiles?.items.length === 0}
+        value={value as LensProfile}
+        as="div"
+        onChange={onChange}
+      >
         {({ open }) => (
           <>
             <div tw="relative mt-1">
