@@ -50,7 +50,6 @@ export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disa
           <>
             <div tw="relative mt-1">
               <Listbox.Button
-                // tw="relative w-full cursor-default rounded-lg border border-primary bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
                 css={[
                   tw`relative w-full cursor-default rounded-lg border border-primary bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm`,
                   disabled &&
@@ -58,12 +57,6 @@ export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disa
                   error &&
                     tw`border-error pr-10 text-error placeholder-error focus:(border-error ring-error)`,
                 ]}
-
-                // css={[
-                //   tw`w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
-                //   disabled &&
-                //     tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
-                // ]}
               >
                 <span tw="flex items-center">
                   {!!value?.picture?.original?.url && (
