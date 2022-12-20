@@ -8,28 +8,27 @@ import 'twin.macro'
 import tw from 'twin.macro'
 import { useAccount } from 'wagmi'
 
-import { useController, UseControllerProps } from 'react-hook-form'
+import { LensProfile, LensProfileData } from '@models/LensProfile'
+import { Control, FieldError, useController, UseControllerProps } from 'react-hook-form'
 import 'twin.macro'
 
 export interface InputSelectProps {
   disabled: boolean
-  errors: any
+  error: FieldError
+  controllerProps: Control & UseControllerProps
 }
 
-export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
-  props: InputSelectProps & UseControllerProps,
-) => {
+export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disabled }) => {
   const {
     field: { value, onChange },
-  } = useController(props)
+  } = useController(controllerProps)
 
-  const { errors, disabled } = props
   const { address } = useAccount()
   const {
     loading: profilesLoading,
     error: profilesError,
     data: profilesData,
-  } = useQuery(GET_PROFILE_BY_WALLET_QUERY, {
+  } = useQuery<LensProfileData>(GET_PROFILE_BY_WALLET_QUERY, {
     variables: {
       request: {
         ownedBy: [
@@ -46,7 +45,7 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
 
   return (
     <>
-      <Listbox disabled={disabled} value={value} as="div" onChange={onChange}>
+      <Listbox disabled={disabled} value={value as LensProfile} as="div" onChange={onChange}>
         {({ open }) => (
           <>
             <div tw="relative mt-1">
@@ -56,7 +55,7 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
                   tw`relative w-full cursor-default rounded-lg border border-primary bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm`,
                   disabled &&
                     tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm`,
-                  errors?.lensHandle &&
+                  error &&
                     tw`border-error pr-10 text-error placeholder-error focus:(border-error ring-error)`,
                 ]}
 
@@ -67,16 +66,19 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
                 // ]}
               >
                 <span tw="flex items-center">
-                  {!!value?.picture?.original?.url &&
-                    value.picture.original.url.startsWith('https://') && (
-                      <Image
-                        src={value.picture.original.url}
-                        width={50}
-                        height={50}
-                        alt={`Profile picture of @${value.handle}`}
-                        tw="h-6 w-6 flex-shrink-0 rounded-full"
-                      />
-                    )}
+                  {!!value?.picture?.original?.url && (
+                    <Image
+                      src={
+                        value.picture.original.url.startsWith('ipfs://')
+                          ? value.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+                          : value.picture.original.url
+                      }
+                      width={50}
+                      height={50}
+                      alt={`Profile picture of @${value.handle}`}
+                      tw="h-6 w-6 flex-shrink-0 rounded-full"
+                    />
+                  )}
                   <span tw="ml-3 block truncate">
                     {value ? value?.handle : 'Select a Lens Handle'}
                   </span>
@@ -97,37 +99,33 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
                   {profilesData?.profiles?.items.map((profile) => (
                     <Listbox.Option
                       key={profile?.id}
-                      // css={[
-                      // tw`relative cursor-default select-none py-2 pl-3 pr-9`,
-                      // active ? tw`bg-indigo-600 text-white` : tw`text-gray-900`,
-                      // ]}
                       css={[
                         value?.id === profile?.id
                           ? tw`bg-primary text-primary-content`
                           : tw`text-primary`,
                         tw`relative cursor-default select-none py-2 pl-3 pr-9`,
                       ]}
-                      // className={({ active }) =>
-                      //   classNames(
-                      //     active ? 'text-white bg-indigo-600' : 'text-gray-900',
-                      //     'relative cursor-default select-none py-2 pl-3 pr-9',
-                      //   )
-                      // }
                       value={profile}
                     >
-                      {({ value, active }) => (
+                      {({ value, active }: any) => (
                         <>
                           <div tw="flex items-center">
-                            {!!profile?.picture?.original?.url &&
-                              profile.picture.original.url.startsWith('https://') && (
-                                <Image
-                                  src={profile.picture.original.url}
-                                  width={50}
-                                  height={50}
-                                  alt={`Profile picture of @${profile.handle}`}
-                                  tw="h-6 w-6 flex-shrink-0 rounded-full"
-                                />
-                              )}
+                            {!!profile?.picture?.original?.url && (
+                              <Image
+                                src={
+                                  profile.picture.original.url.startsWith('ipfs://')
+                                    ? profile.picture.original.url.replace(
+                                        'ipfs://',
+                                        'https://ipfs.io/ipfs/',
+                                      )
+                                    : profile.picture.original.url
+                                }
+                                width={50}
+                                height={50}
+                                alt={`Profile picture of @${profile.handle}`}
+                                tw="h-6 w-6 flex-shrink-0 rounded-full"
+                              />
+                            )}
                             <span
                               css={[
                                 tw`ml-3 block truncate`,
@@ -137,7 +135,6 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
                               {profile?.handle}
                             </span>
                           </div>
-
                           {value ? (
                             <span
                               css={[
@@ -158,7 +155,7 @@ export const InputSelect: FC<InputSelectProps & UseControllerProps> = (
           </>
         )}
       </Listbox>
-      {errors['lensHandle'] && <p tw="mt-2 text-xs text-error">{errors['lensHandle'].message}</p>}
+      {error?.message && <p tw="mt-2 text-xs text-error">{error.message}</p>}
       {profilesData?.profiles?.items.length === 0 && (
         <p tw="mt-2 text-xs text-error">
           You do not have any Lens Handles. Please claim one{' '}
