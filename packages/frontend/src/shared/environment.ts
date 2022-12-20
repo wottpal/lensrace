@@ -26,5 +26,5 @@ export const env = {
   lensApiUrl:
     process.env.NEXT_PUBLIC_PRODUCTION_MODE === 'true'
       ? 'https://api.lens.dev'
-      : 'https://api-mumbai.lens.dev', // Lens API URL
+      : 'https://api.lens.dev', // Lens API URL
 }

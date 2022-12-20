@@ -7,7 +7,7 @@ import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { FieldError, SubmitHandler, useForm } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
 import { useAccount, useNetwork } from 'wagmi'
@@ -78,7 +78,11 @@ const HomePage: NextPage = () => {
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
-          <InputSelect disabled={disabled} name="lensHandle" errors={errors} control={control} />
+          <InputSelect
+            disabled={disabled}
+            error={errors.lensHandle as FieldError}
+            controllerProps={{ name: 'lensHandle', control: control }}
+          />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox

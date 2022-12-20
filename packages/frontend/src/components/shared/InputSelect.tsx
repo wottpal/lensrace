@@ -33,8 +33,8 @@ export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disa
       request: {
         ownedBy: [
           // Test address with data
-          // '0x52EAF3F04cbac0a4B9878A75AB2523722325D4D4',
-          address,
+          '0x52EAF3F04cbac0a4B9878A75AB2523722325D4D4',
+          // address,
         ],
         limit: 10,
       },

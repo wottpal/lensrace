@@ -6,7 +6,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useState } from 'react'
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import { Profile } from '@pages/setup'
+import { LensProfile } from '@models/LensProfile'
 import Image from 'next/image'
 import { FC } from 'react'
 import { useController, UseControllerProps } from 'react-hook-form'
@@ -53,7 +53,7 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
   }, [query])
 
   // A function that sets profiles based on onchange event
-  const handleSelectedProfiles = (profiles: Profile[]) => {
+  const handleSelectedProfiles = (profiles: LensProfile[]) => {
     const newProfiles = [...(value || []), ...profiles]
     setValue('raceParticipants', newProfiles)
     console.log('Clearing errors...')
@@ -63,7 +63,12 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
 
   return (
     <>
-      <Combobox as="div" value={value} onChange={handleSelectedProfiles} disabled={disabled}>
+      <Combobox
+        as="div"
+        value={value as LensProfile[]}
+        onChange={handleSelectedProfiles}
+        disabled={disabled}
+      >
         <div tw="relative mt-1">
           <Combobox.Input
             css={[
@@ -76,7 +81,7 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
             // tw="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search race participants"
-            displayValue={(profile: Profile) => profile?.handle}
+            displayValue={(profile: LensProfile) => profile?.handle}
           />
           <Combobox.Button tw="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
             <ChevronUpDownIcon tw="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -84,36 +89,35 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
 
           {!loading && !!data?.['search']?.['items']?.length && (
             <Combobox.Options tw="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {data?.['search']?.['items'].map((profile: Profile) => (
+              {data?.['search']?.['items'].map((profile: LensProfile) => (
                 <Combobox.Option
-                  key={profile?.profileId}
+                  key={profile?.handle}
                   value={[profile]}
                   css={[
                     tw`relative cursor-default select-none py-2 pl-3 pr-9`,
                     (value || []).includes(profile) ? tw`bg-primary text-white` : tw`text-gray-900`,
                   ]}
-                  // tw="relative cursor-default select-none bg-primary py-2 pl-3 pr-9 text-white"
-                  // className={({ active }) =>
-                  //   classNames(
-                  //     'relative cursor-default select-none py-2 pl-3 pr-9',
-                  //     active ? 'bg-primary text-white' : 'text-gray-900',
-                  //   )
-                  // }
                 >
                   {({ active, selected }) => (
                     <>
                       <div tw="flex items-center">
                         {/* TODO: In lens test env there are many different urls so not sure if we can grap profile pic */}
-                        {!!profile?.picture?.original?.url &&
-                          profile.picture.original.url.startsWith('https://') && (
-                            <Image
-                              src={profile.picture.original.url}
-                              width={50}
-                              height={50}
-                              alt={`Profile picture of @${profile.handle}`}
-                              tw="h-6 w-6 shrink-0 rounded-full"
-                            />
-                          )}
+                        {!!profile?.picture?.original?.url && (
+                          <Image
+                            src={
+                              profile.picture.original.url.startsWith('ipfs://')
+                                ? profile.picture.original.url.replace(
+                                    'ipfs://',
+                                    'https://ipfs.io/ipfs/',
+                                  )
+                                : profile.picture.original.url
+                            }
+                            width={50}
+                            height={50}
+                            alt={`Profile picture of @${profile.handle}`}
+                            tw="h-6 w-6 shrink-0 rounded-full"
+                          />
+                        )}
                         <span css={[tw`ml-3 truncate`, selected && tw`font-semibold`]}>
                           {profile?.handle}
                         </span>
@@ -141,26 +145,32 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
       {/* List of selected profiles if multi is true */}
       {!!value?.length && (
         <div tw="mt-4">
-          {value.map((profile: Profile) => (
-            <div key={profile?.profileId} tw="py-2">
+          {value.map((profile: LensProfile) => (
+            <div key={profile?.handle} tw="py-2">
               <div tw="flex items-center">
-                {!!profile?.picture?.original?.url &&
-                  profile.picture.original.url.startsWith('https://') && (
-                    <Image
-                      src={profile.picture.original.url}
-                      width={50}
-                      height={50}
-                      alt={`Profile picture of @${profile.handle}`}
-                      tw="h-10 w-10 shrink-0 rounded-full object-contain"
-                    />
-                  )}
-                <span tw="ml-8 truncate font-semibold">@{profile?.handle}</span>
+                {!!profile?.picture?.original?.url && (
+                  <Image
+                    src={
+                      profile.picture.original.url.startsWith('ipfs://')
+                        ? profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+                        : profile.picture.original.url
+                    }
+                    width={50}
+                    height={50}
+                    alt={`Profile picture of @${profile.handle}`}
+                    tw="h-10 w-10 shrink-0 rounded-full object-contain"
+                  />
+                )}
+                <span tw="ml-4 truncate font-semibold">@{profile?.handle}</span>
                 {/* Button to remove the profile from selectedProfile */}
                 <button
                   tw="ml-4 text-primary hover:text-primary/80"
                   onClick={() => {
                     if (!value?.length) return
-                    const newProfiles = value.filter((p) => p?.profileId !== profile?.profileId)
+
+                    const newProfiles = value.filter(
+                      (p: LensProfile) => p?.handle !== profile?.handle,
+                    )
                     setValue('raceParticipants', newProfiles)
                   }}
                 >
