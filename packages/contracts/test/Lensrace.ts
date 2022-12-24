@@ -48,7 +48,7 @@ beforeEach(async () => {
   await factory.setRaceNft(raceNft.address)
 })
 
-describe('Lensrace', function() {
+describe('Lensrace', function () {
   /// Convenience function to deploye a complete race.
   const deployRace = async (profileIds: number[], raceName: string, followerGoal: number) => {
     const deployRaceTx = await factory.deployRace(profileIds, raceName, followerGoal)
@@ -98,7 +98,7 @@ describe('Lensrace', function() {
 
   it('it should be possible to initialize a race only once', async () => {
     const { race } = await deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)
-    await expect(race.initialize(factory.address, [], '', 0)).to.be.revertedWith(
+    await expect(race.initialize(factory.address, 0, [], '', 0)).to.be.revertedWith(
       RevertReasons.ContractAlreadyInitialized,
     )
   })
@@ -122,7 +122,7 @@ describe('Lensrace', function() {
     const { race } = await deployRace(profileIds, raceName, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
     expect(await race.followerGoal()).to.equal(followerGoal)
-    expect(await race.getProfileIds()).to.deep.equal(profileIds.map(id => BigNumber.from(id)))
+    expect(await race.getProfileIds()).to.deep.equal(profileIds.map((id) => BigNumber.from(id)))
   })
 
   it('it should not settle before reached goal', async () => {
@@ -153,13 +153,13 @@ describe('Lensrace', function() {
     await expect(raceNft.ownerOf(0)).to.be.reverted
     await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length }))
       .to.emit(race, 'RaceSettled')
-      .withArgs(LENS_PROFILE_ID_99_FOLLOWERS, 100, OWNER_LENS_PROFILE_ID_99_FOLLOWERS, 0)
+      .withArgs(1, LENS_PROFILE_ID_99_FOLLOWERS, 100, OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
 
     expect(await race.hasSettled()).to.equal(true)
     expect(await race.winningProfileId()).to.equal(LENS_PROFILE_ID_99_FOLLOWERS)
 
     // Check if victory nft was minted successfully
-    expect(await raceNft.ownerOf(0)).to.equal(OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
+    expect(await raceNft.ownerOf(1)).to.equal(OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
   })
 
   it('raceNft should successfully grant roles', async () => {
@@ -169,7 +169,7 @@ describe('Lensrace', function() {
     await expect(raceNft.connect(addr1).grantFactoryRole(addr2.address)).to.be.revertedWith(
       RevertReasons.AccountIsMissingRole,
     )
-    await expect(raceNft.connect(addr2).safeMint(addr3.address)).to.be.revertedWith(
+    await expect(raceNft.connect(addr2).safeMint(addr3.address, 0)).to.be.revertedWith(
       RevertReasons.AccountIsMissingRole,
     )
     await expect(raceNft.connect(owner).grantFactoryRole(addr1.address)).not.to.be.reverted
@@ -177,8 +177,8 @@ describe('Lensrace', function() {
     await expect(raceNft.connect(addr2).grantRaceRole(addr2.address)).to.be.revertedWith(
       RevertReasons.AccountIsMissingRole,
     )
-    await expect(raceNft.connect(addr2).safeMint(addr3.address)).not.to.be.reverted
-    await expect(raceNft.connect(addr1).safeMint(addr3.address)).to.be.revertedWith(
+    await expect(raceNft.connect(addr2).safeMint(addr3.address, 0)).not.to.be.reverted
+    await expect(raceNft.connect(addr1).safeMint(addr3.address, 0)).to.be.revertedWith(
       RevertReasons.AccountIsMissingRole,
     )
   })
@@ -186,7 +186,7 @@ describe('Lensrace', function() {
   it('raceNft should correctly set baseUri', async () => {
     await raceNft.connect(owner).grantFactoryRole(owner.address)
     await raceNft.connect(owner).grantRaceRole(owner.address)
-    await expect(raceNft.safeMint(addr1.address))
+    await expect(raceNft.safeMint(addr1.address, 0))
       .to.emit(raceNft, 'VictoryMinted')
       .withArgs(addr1.address, 0)
 

@@ -29,7 +29,7 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
         // Create empty sample Lensrace contract to clone from
         Lensrace race = new Lensrace();
         uint256[] memory arr;
-        race.initialize(address(this), arr, "", 0);
+        race.initialize(address(this), 0, arr, "", 0);
         raceLib = address(race);
 
         __Ownable_init();
@@ -57,7 +57,8 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
 
         // Clone & initialize Lensrace
         Lensrace race = Lensrace(Clones.clone(raceLib));
-        race.initialize(address(this), profileIds, raceName, followerGoal);
+        uint256 raceId = races.length + 1;
+        race.initialize(address(this), raceId, profileIds, raceName, followerGoal);
         races.push(race);
 
         // Grant minting rights fot victory NFT

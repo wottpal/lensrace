@@ -7,14 +7,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract Lensrace is Initializable {
     event RaceSettled(
+        uint256 indexed raceId,
         uint256 indexed winnerProfileId,
         uint256 winnerFollowerCount,
-        address indexed winningProfileOwner,
-        uint256 indexed victoryNftTokenId
+        address indexed winningProfileOwner
     );
 
     LensraceFactory public factory;
 
+    uint256 public raceId;
     uint256[] public profileIds;
     string public raceName;
     uint256 public followerGoal;
@@ -26,18 +27,22 @@ contract Lensrace is Initializable {
     /**
      * @notice Initializes contract parameters. Can be only called once by the owner.
      * @param _factory Address of the parent LensraceFactory contract.
+     * @param _raceId Global id of race.
      * @param _profileIds Array of Lens profile ids in the LensHub.
      * @param _raceName Custom string that resembles the race.
      * @param _followerGoal Absolute follower goal the winner should reach.
      */
     function initialize(
         address _factory,
+        uint256 _raceId,
         uint256[] memory _profileIds,
         string memory _raceName,
         uint256 _followerGoal
     ) external initializer {
         hasSettled = false;
+
         factory = LensraceFactory(_factory);
+        raceId = _raceId;
         profileIds = _profileIds;
         raceName = _raceName;
         followerGoal = _followerGoal;
@@ -95,14 +100,9 @@ contract Lensrace is Initializable {
         // Mint victory NFT for winner
         address lensHubAddress = address(factory.lensHub());
         address winningProfileOwner = IERC721Enumerable(lensHubAddress).ownerOf(winningProfileId);
-        uint256 victoryNftTokenId = factory.raceNft().safeMint(winningProfileOwner);
+        factory.raceNft().safeMint(winningProfileOwner, raceId);
 
-        emit RaceSettled(
-            winningProfileId,
-            winningFollowerCount,
-            winningProfileOwner,
-            victoryNftTokenId
-        );
+        emit RaceSettled(raceId, winningProfileId, winningFollowerCount, winningProfileOwner);
         return winningProfileId;
     }
 }
