@@ -28,16 +28,16 @@ importers:
       '@nomiclabs/hardhat-etherscan': ^3.1.3
       '@openzeppelin/contracts': ^4.8.0
       '@openzeppelin/contracts-upgradeable': ^4.8.0
-      '@openzeppelin/hardhat-upgrades': ^1.21.0
-      '@typechain/ethers-v5': ^10.1.1
-      '@typechain/hardhat': ^6.1.4
+      '@openzeppelin/hardhat-upgrades': ^1.22.0
+      '@typechain/ethers-v5': ^10.2.0
+      '@typechain/hardhat': ^6.1.5
       '@types/chai': ^4.3.4
       '@types/mocha': ^9.1.1
       '@types/node': ^16.18.11
       '@typescript-eslint/eslint-plugin': ^5.47.1
       '@typescript-eslint/parser': ^5.47.1
       chai: ^4.3.7
-      dayjs: ^1.11.6
+      dayjs: ^1.11.7
       dotenv: ^16.0.3
       eslint: ^8.30.0
       eslint-config-prettier: ^8.5.0
@@ -61,7 +61,7 @@ importers:
       '@nomiclabs/hardhat-etherscan': 3.1.3_hardhat@2.12.4
       '@openzeppelin/contracts': 4.8.0
       '@openzeppelin/contracts-upgradeable': 4.8.0
-      '@openzeppelin/hardhat-upgrades': 1.21.0_ndqpeehblerztqqolgf2ghhm6m
+      '@openzeppelin/hardhat-upgrades': 1.22.0_ndqpeehblerztqqolgf2ghhm6m
       '@typechain/ethers-v5': 10.2.0_uvzrz6if4akbrktgtw2vfdalai
       '@typechain/hardhat': 6.1.5_w5qvcidahwqdkdc2rzrbmling4
       '@types/chai': 4.3.4
@@ -70,7 +70,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.1_txmweb6yn7coi7nfrp22gpyqmy
       '@typescript-eslint/parser': 5.47.1_lzzuuodtsqwxnvqeq4g4likcqa
       chai: 4.3.7
-      dayjs: 1.11.6
+      dayjs: 1.11.7
       dotenv: 16.0.3
       eslint: 8.30.0
       eslint-config-prettier: 8.5.0_eslint@8.30.0
@@ -1829,8 +1829,8 @@ packages:
     resolution: {integrity: sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==}
     dev: true
 
-  /@openzeppelin/hardhat-upgrades/1.21.0_ndqpeehblerztqqolgf2ghhm6m:
-    resolution: {integrity: sha512-Kwl7IN0Hlhj4HluMTTl0DrtU90OI/Q6rG3sAyd2pv3fababe9EuZqs9DydOlkWM45JwTzC+eBzX3TgHsqI13eA==}
+  /@openzeppelin/hardhat-upgrades/1.22.0_ndqpeehblerztqqolgf2ghhm6m:
+    resolution: {integrity: sha512-1qyZnDaxl0C8tne7ykNRa/fxw3FrNCY2M3fGuCiQW5DDkJoXhLgm3JVsXwl6X7q9mQSrik4vgBbI3ErmxmZTYg==}
     hasBin: true
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0 || 0.3.0-beta.13
@@ -4209,8 +4209,8 @@ packages:
       assert-plus: 1.0.0
     dev: true
 
-  /dayjs/1.11.6:
-    resolution: {integrity: sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==}
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: true
 
   /death/1.1.0:
@@ -4237,7 +4237,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
       supports-color: 6.0.0
     dev: true
 
