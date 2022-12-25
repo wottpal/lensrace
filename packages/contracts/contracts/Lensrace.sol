@@ -29,6 +29,7 @@ contract Lensrace is Initializable {
     bool public hasSettled;
     uint256 public winningProfileId;
     uint256 public winningFollowerCount;
+    uint256[] public initialFollowerCounts;
 
     /**
      * @notice Initializes contract parameters. Can be only called once by the owner.
@@ -56,6 +57,9 @@ contract Lensrace is Initializable {
         raceType = _raceType;
         followerGoal = _followerGoal;
 
+        // Store initial follower counts
+        initialFollowerCounts = getFollowerCounts();
+
         // Check and revert if winning condition is already fullfilled
         uint256 _winningProfileId;
         (_winningProfileId, ) = canSettle();
@@ -72,19 +76,34 @@ contract Lensrace is Initializable {
     }
 
     /**
+     * @notice Returns array of lens follower counts of respective `profileIds`
+     */
+    function getFollowerCounts() public view returns (uint256[] memory) {
+        uint256[] memory followerCounts = new uint256[](profileIds.length);
+        for (uint256 i = 0; i < profileIds.length; i++) {
+            address followNft = factory.lensHub().getFollowNFT(profileIds[i]);
+            followerCounts[i] = followNft == address(0)
+                ? 0
+                : IERC721Enumerable(followNft).totalSupply();
+        }
+        return followerCounts;
+    }
+
+    /**
      * @notice Checks if the winning condition has reached by a participating profile.
      * @return `profileId` and `followerCount` of the winning account (zero if none).
      */
     function canSettle() public view returns (uint256, uint256) {
         uint256 maxProfileId;
         uint256 maxFollowerCount;
+        uint256[] memory followerCounts = getFollowerCounts();
         for (uint256 i = 0; i < profileIds.length; i++) {
-            address followNft = factory.lensHub().getFollowNFT(profileIds[i]);
-            if (followNft == address(0)) continue;
-            uint256 followerCount = IERC721Enumerable(followNft).totalSupply();
+            uint256 followerCount = raceType == RaceType.ABSOLUTE
+                ? followerCounts[i]
+                : followerCounts[i] - initialFollowerCounts[i];
             if (followerCount > maxFollowerCount) {
                 maxProfileId = profileIds[i];
-                maxFollowerCount = followerCount;
+                maxFollowerCount = followerCounts[i];
             }
         }
         if (maxFollowerCount < followerGoal) {
