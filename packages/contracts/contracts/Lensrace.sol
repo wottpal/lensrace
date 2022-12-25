@@ -16,8 +16,14 @@ contract Lensrace is Initializable {
     LensraceFactory public factory;
 
     uint256 public raceId;
-    uint256[] public profileIds;
     string public raceName;
+    uint256[] public profileIds;
+
+    enum RaceType {
+        ABSOLUTE,
+        RELATIVE
+    }
+    RaceType public raceType;
     uint256 public followerGoal;
 
     bool public hasSettled;
@@ -28,29 +34,34 @@ contract Lensrace is Initializable {
      * @notice Initializes contract parameters. Can be only called once by the owner.
      * @param _factory Address of the parent LensraceFactory contract.
      * @param _raceId Global id of race.
-     * @param _profileIds Array of Lens profile ids in the LensHub.
      * @param _raceName Custom string that resembles the race.
+     * @param _profileIds Array of Lens profile ids in the LensHub.
+     * @param _raceType Defines the type of the race (either absolute or relative).
      * @param _followerGoal Absolute follower goal the winner should reach.
      */
     function initialize(
         address _factory,
         uint256 _raceId,
-        uint256[] memory _profileIds,
         string memory _raceName,
+        uint256[] memory _profileIds,
+        RaceType _raceType,
         uint256 _followerGoal
     ) external initializer {
         hasSettled = false;
 
         factory = LensraceFactory(_factory);
         raceId = _raceId;
-        profileIds = _profileIds;
         raceName = _raceName;
+        profileIds = _profileIds;
+        raceType = _raceType;
         followerGoal = _followerGoal;
 
         // Check and revert if winning condition is already fullfilled
         uint256 _winningProfileId;
         (_winningProfileId, ) = canSettle();
         require(_winningProfileId == 0, "can be settled on init");
+
+        // TODO Add RaceStarted Event
     }
 
     /**

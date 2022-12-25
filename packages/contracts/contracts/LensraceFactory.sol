@@ -14,8 +14,8 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
     ILensHub public lensHub;
     LensraceVictoryNFT public raceNft;
     address private raceLib;
-
     Lensrace[] public races;
+
     uint256[50] __gap;
 
     /**
@@ -29,7 +29,7 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
         // Create empty sample Lensrace contract to clone from
         Lensrace race = new Lensrace();
         uint256[] memory arr;
-        race.initialize(address(this), 0, arr, "", 0);
+        race.initialize(address(this), 0, "", arr, Lensrace.RaceType.ABSOLUTE, 0);
         raceLib = address(race);
 
         __Ownable_init();
@@ -42,13 +42,15 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
 
     /**
      * @notice Deploys a new Lensrace contract instance by shallow cloning.
-     * @param profileIds Array of Lens profile ids in the LensHub
      * @param raceName Custom string that resembles the race
+     * @param profileIds Array of Lens profile ids in the LensHub
+     * @param raceType Defines the type of the race (either absolute or relative).
      * @param followerGoal Absolute follower goal the winner should reach
      */
     function deployRace(
-        uint256[] memory profileIds,
         string memory raceName,
+        uint256[] memory profileIds,
+        Lensrace.RaceType raceType,
         uint256 followerGoal
     ) external returns (address) {
         require(address(raceNft) != address(0), "raceNft address not yet set");
@@ -58,7 +60,7 @@ contract LensraceFactory is Initializable, OwnableUpgradeable {
         // Clone & initialize Lensrace
         Lensrace race = Lensrace(Clones.clone(raceLib));
         uint256 raceId = races.length + 1;
-        race.initialize(address(this), raceId, profileIds, raceName, followerGoal);
+        race.initialize(address(this), raceId, raceName, profileIds, raceType, followerGoal);
         races.push(race);
 
         // Grant minting rights fot victory NFT

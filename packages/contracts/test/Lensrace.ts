@@ -12,6 +12,14 @@ import { RevertReasons } from '../shared/revertReasons'
 import { ILensHub__factory, Lensrace__factory } from '../typechain-types'
 
 /**
+ * Other Types
+ */
+export enum RaceType {
+  ABSOLUTE = 0,
+  RELATIVE = 1,
+}
+
+/**
  * Constants & Global Variables
  */
 const LENS_PROFILE_ID_99_FOLLOWERS = 994
@@ -50,8 +58,13 @@ beforeEach(async () => {
 
 describe('Lensrace', function () {
   /// Convenience function to deploye a complete race.
-  const deployRace = async (profileIds: number[], raceName: string, followerGoal: number) => {
-    const deployRaceTx = await factory.deployRace(profileIds, raceName, followerGoal)
+  const deployRace = async (
+    raceName: string,
+    profileIds: number[],
+    raceType: RaceType,
+    followerGoal: number,
+  ) => {
+    const deployRaceTx = await factory.deployRace(raceName, profileIds, raceType, followerGoal)
     let raceAddress = constants.AddressZero
     await expect(deployRaceTx)
       .to.emit(factory, 'RaceDeployed')
@@ -75,20 +88,27 @@ describe('Lensrace', function () {
   })
 
   it('it should not deploy a race with empty profileIds', async () => {
-    await expect(factory.deployRace([], '', 100)).to.be.revertedWith(RevertReasons.ProfileIdsEmpty)
+    await expect(factory.deployRace('', [], 0, 100)).to.be.revertedWith(
+      RevertReasons.ProfileIdsEmpty,
+    )
   })
 
   it('it should not deploy a race without the raceNft contract set', async () => {
     const factory = await upgrades.deployProxy(LensraceFactory, [addresses.LensHub])
     await factory.deployed()
-    await expect(factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)).to.be.revertedWith(
+    await expect(factory.deployRace('', [LENS_PROFILE_ID_99_FOLLOWERS], 0, 100)).to.be.revertedWith(
       RevertReasons.RaceNftAddressEmpty,
     )
   })
 
   it('it should correctly deploy & store a race', async () => {
     expect(await factory.racesLength()).to.equal(0)
-    const { raceAddress } = await deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)
+    const { raceAddress } = await deployRace(
+      '',
+      [LENS_PROFILE_ID_99_FOLLOWERS],
+      RaceType.ABSOLUTE,
+      100,
+    )
     expect(await factory.racesLength()).to.equal(1)
     const latestRace = await factory.races(0)
     expect(raceAddress).to.equal(latestRace)
@@ -97,20 +117,20 @@ describe('Lensrace', function () {
   })
 
   it('it should be possible to initialize a race only once', async () => {
-    const { race } = await deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 100)
-    await expect(race.initialize(factory.address, 0, [], '', 0)).to.be.revertedWith(
+    const { race } = await deployRace('', [LENS_PROFILE_ID_99_FOLLOWERS], RaceType.ABSOLUTE, 100)
+    await expect(race.initialize(factory.address, 0, '', [], 0, 0)).to.be.revertedWith(
       RevertReasons.ContractAlreadyInitialized,
     )
   })
 
   it('it should not deploy a race with nonexistent profile-ids', async () => {
     await expect(
-      factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS, 1239291391391239], '', 100),
+      factory.deployRace('', [LENS_PROFILE_ID_99_FOLLOWERS, 1239291391391239], 0, 100),
     ).to.be.revertedWith(RevertReasons.NotAllProfileIdsExist)
   })
 
   it('it should not deploy a race with already fulfilled goal', async () => {
-    await expect(factory.deployRace([LENS_PROFILE_ID_99_FOLLOWERS], '', 99)).to.be.revertedWith(
+    await expect(factory.deployRace('', [LENS_PROFILE_ID_99_FOLLOWERS], 0, 99)).to.be.revertedWith(
       RevertReasons.RaceCanBeSettledOnInit,
     )
   })
@@ -118,8 +138,9 @@ describe('Lensrace', function () {
   it('it should correctly set race attributes', async () => {
     const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
     const raceName = 'Epic Race'
+    const raceType = RaceType.ABSOLUTE
     const followerGoal = 100
-    const { race } = await deployRace(profileIds, raceName, followerGoal)
+    const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
     expect(await race.followerGoal()).to.equal(followerGoal)
     expect(await race.getProfileIds()).to.deep.equal(profileIds.map((id) => BigNumber.from(id)))
@@ -128,8 +149,9 @@ describe('Lensrace', function () {
   it('it should not settle before reached goal', async () => {
     const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
     const raceName = 'Epic Race'
+    const raceType = RaceType.ABSOLUTE
     const followerGoal = 100
-    const { race } = await deployRace(profileIds, raceName, followerGoal)
+    const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
     await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length })).to.be.revertedWith(
       RevertReasons.RaceGoalNotReached,
     )
@@ -140,8 +162,9 @@ describe('Lensrace', function () {
   it('it should settle and declare winner correctly', async () => {
     const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
     const raceName = 'Epic Race'
+    const raceType = RaceType.ABSOLUTE
     const followerGoal = 100
-    const { race } = await deployRace(profileIds, raceName, followerGoal)
+    const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
 
     // Give profile an extra follow to reach 100
     await impersonateAccount(RANDOM_LENS_PROFILE_OWNER)
