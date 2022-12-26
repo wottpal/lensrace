@@ -93,10 +93,13 @@ contract Lensrace is Initializable {
         for (uint256 i = 0; i < profileIds.length; i++) {
             address followNft = factory.lensHub().getFollowNFT(profileIds[i]);
             if (followNft == address(0)) continue;
-            uint256 followNftSupply = IERC721Enumerable(followNft).totalSupply();
+            uint256 followers = IERC721Enumerable(followNft).totalSupply();
+            uint256 initialFollowers = i >= initialFollowerCounts.length
+                ? 0
+                : initialFollowerCounts[i];
             followerCounts[i] = raceType == RaceType.ABSOLUTE
-                ? followNftSupply
-                : followNftSupply - initialFollowerCounts[i];
+                ? followers
+                : followers - initialFollowers;
         }
         return followerCounts;
     }

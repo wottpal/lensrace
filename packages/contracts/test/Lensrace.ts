@@ -142,16 +142,16 @@ describe('Lensrace', function () {
     const followerGoal = 100
     const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
     expect(await race.raceName()).to.equal(raceName)
+    expect(await race.raceType()).to.equal(raceType)
     expect(await race.followerGoal()).to.equal(followerGoal)
     expect(await race.getProfileIds()).to.deep.equal(profileIds.map((id) => BigNumber.from(id)))
   })
 
-  it('it should not settle before reached goal', async () => {
+  it('it should not settle before reached goal for absolute races', async () => {
     const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
-    const raceName = 'Epic Race'
     const raceType = RaceType.ABSOLUTE
     const followerGoal = 100
-    const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
+    const { race } = await deployRace('', profileIds, raceType, followerGoal)
     await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length })).to.be.revertedWith(
       RevertReasons.RaceGoalNotReached,
     )
@@ -159,12 +159,23 @@ describe('Lensrace', function () {
     expect(await race.winningProfileId()).to.equal(0)
   })
 
-  it('it should settle and declare winner correctly', async () => {
+  it('it should not settle before reached goal for relative races', async () => {
     const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
-    const raceName = 'Epic Race'
+    const raceType = RaceType.RELATIVE
+    const followerGoal = 1
+    const { race } = await deployRace('', profileIds, raceType, followerGoal)
+    await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length })).to.be.revertedWith(
+      RevertReasons.RaceGoalNotReached,
+    )
+    expect(await race.hasSettled()).to.equal(false)
+    expect(await race.winningProfileId()).to.equal(0)
+  })
+
+  it('it should settle and declare winner correctly for absolute races', async () => {
+    const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
     const raceType = RaceType.ABSOLUTE
     const followerGoal = 100
-    const { race } = await deployRace(raceName, profileIds, raceType, followerGoal)
+    const { race } = await deployRace('', profileIds, raceType, followerGoal)
 
     // Give profile an extra follow to reach 100
     await impersonateAccount(RANDOM_LENS_PROFILE_OWNER)
@@ -176,7 +187,32 @@ describe('Lensrace', function () {
     await expect(raceNft.ownerOf(0)).to.be.reverted
     await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length }))
       .to.emit(race, 'RaceSettled')
-      .withArgs(1, LENS_PROFILE_ID_99_FOLLOWERS, 100, OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
+      .withArgs(1, LENS_PROFILE_ID_99_FOLLOWERS, followerGoal, OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
+
+    expect(await race.hasSettled()).to.equal(true)
+    expect(await race.winningProfileId()).to.equal(LENS_PROFILE_ID_99_FOLLOWERS)
+
+    // Check if victory nft was minted successfully
+    expect(await raceNft.ownerOf(1)).to.equal(OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
+  })
+
+  it('it should settle and declare winner correctly for relative races', async () => {
+    const profileIds = [1208, LENS_PROFILE_ID_99_FOLLOWERS]
+    const raceType = RaceType.RELATIVE
+    const followerGoal = 1
+    const { race } = await deployRace('', profileIds, raceType, followerGoal)
+
+    // Give profile an extra follow to reach 1
+    await impersonateAccount(RANDOM_LENS_PROFILE_OWNER)
+    const profileOwner = await ethers.getSigner(RANDOM_LENS_PROFILE_OWNER)
+    const lensHub = ILensHub__factory.connect(addresses.LensHub!, profileOwner)
+    await lensHub.follow([LENS_PROFILE_ID_99_FOLLOWERS], [[]])
+
+    // Race settling should go through and declare profile
+    await expect(raceNft.ownerOf(0)).to.be.reverted
+    await expect(race.settle({ gasLimit: 250000 + 25000 * profileIds.length }))
+      .to.emit(race, 'RaceSettled')
+      .withArgs(1, LENS_PROFILE_ID_99_FOLLOWERS, followerGoal, OWNER_LENS_PROFILE_ID_99_FOLLOWERS)
 
     expect(await race.hasSettled()).to.equal(true)
     expect(await race.winningProfileId()).to.equal(LENS_PROFILE_ID_99_FOLLOWERS)
