@@ -58,7 +58,7 @@ contract Lensrace is Initializable {
         followerGoal = _followerGoal;
 
         // Store initial follower counts
-        initialFollowerCounts = getFollowerCounts();
+        initialFollowerCounts = getRespectiveFollowerCounts();
 
         // Check and revert if winning condition is already fullfilled
         uint256 _winningProfileId;
@@ -76,15 +76,20 @@ contract Lensrace is Initializable {
     }
 
     /**
-     * @notice Returns array of lens follower counts of respective `profileIds`
+     * @notice Returns followers respectively to `profileIds`. Depending on the
+     *   `raceType` it either returns absolute follower counts or relative ones
+     *   (absolute ones subtracted by `initialFollowerCounts`).
+     * @return `followerCounts` array of followers respectively to `profileIds`.
      */
-    function getFollowerCounts() public view returns (uint256[] memory) {
+    function getRespectiveFollowerCounts() public view returns (uint256[] memory) {
         uint256[] memory followerCounts = new uint256[](profileIds.length);
         for (uint256 i = 0; i < profileIds.length; i++) {
             address followNft = factory.lensHub().getFollowNFT(profileIds[i]);
-            followerCounts[i] = followNft == address(0)
-                ? 0
-                : IERC721Enumerable(followNft).totalSupply();
+            if (followNft == address(0)) continue;
+            uint256 followNftSupply = IERC721Enumerable(followNft).totalSupply();
+            followerCounts[i] = raceType == RaceType.ABSOLUTE
+                ? followNftSupply
+                : followNftSupply - initialFollowerCounts[i];
         }
         return followerCounts;
     }
@@ -96,12 +101,9 @@ contract Lensrace is Initializable {
     function canSettle() public view returns (uint256, uint256) {
         uint256 maxProfileId;
         uint256 maxFollowerCount;
-        uint256[] memory followerCounts = getFollowerCounts();
+        uint256[] memory followerCounts = getRespectiveFollowerCounts();
         for (uint256 i = 0; i < profileIds.length; i++) {
-            uint256 followerCount = raceType == RaceType.ABSOLUTE
-                ? followerCounts[i]
-                : followerCounts[i] - initialFollowerCounts[i];
-            if (followerCount > maxFollowerCount) {
+            if (followerCounts[i] > maxFollowerCount) {
                 maxProfileId = profileIds[i];
                 maxFollowerCount = followerCounts[i];
             }
