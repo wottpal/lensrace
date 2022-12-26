@@ -6,6 +6,18 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract Lensrace is Initializable {
+    enum RaceType {
+        ABSOLUTE,
+        RELATIVE
+    }
+
+    event RaceInitiated(
+        uint256 indexed raceId,
+        string raceName,
+        uint256[] profileIds,
+        RaceType indexed raceType,
+        uint256 indexed followerGoal
+    );
     event RaceSettled(
         uint256 indexed raceId,
         uint256 indexed winnerProfileId,
@@ -18,11 +30,6 @@ contract Lensrace is Initializable {
     uint256 public raceId;
     string public raceName;
     uint256[] public profileIds;
-
-    enum RaceType {
-        ABSOLUTE,
-        RELATIVE
-    }
     RaceType public raceType;
     uint256 public followerGoal;
 
@@ -65,7 +72,7 @@ contract Lensrace is Initializable {
         (_winningProfileId, ) = canSettle();
         require(_winningProfileId == 0, "can be settled on init");
 
-        // TODO Add RaceStarted Event
+        emit RaceInitiated(raceId, raceName, profileIds, raceType, followerGoal);
     }
 
     /**
