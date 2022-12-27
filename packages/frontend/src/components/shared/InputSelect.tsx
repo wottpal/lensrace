@@ -9,13 +9,16 @@ import tw from 'twin.macro'
 import { useAccount } from 'wagmi'
 
 import { LensProfile, LensProfileData } from '@models/LensProfile'
-import { Control, FieldError, useController, UseControllerProps } from 'react-hook-form'
+import { FieldError, useController } from 'react-hook-form'
 import 'twin.macro'
 
 export interface InputSelectProps {
   disabled: boolean
   error: FieldError
-  controllerProps: Control & UseControllerProps
+  controllerProps: {
+    control: any
+    name: any
+  }
 }
 
 export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disabled }) => {
@@ -41,7 +44,7 @@ export const InputSelect: FC<InputSelectProps> = ({ controllerProps, error, disa
     },
   })
 
-  console.log({ profilesLoading, profilesError, profilesData })
+  // console.log({ profilesLoading, profilesError, profilesData })
 
   return (
     <>

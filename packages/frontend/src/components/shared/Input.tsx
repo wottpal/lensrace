@@ -20,7 +20,7 @@ export const Input: FC<InputProps> = ({
   register,
   errors,
 }) => {
-  console.log('Error', errors[registerId])
+  // console.log('Error', errors[registerId])
 
   return (
     <div>

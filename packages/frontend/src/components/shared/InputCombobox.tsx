@@ -9,33 +9,36 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { LensProfile } from '@models/LensProfile'
 import Image from 'next/image'
 import { FC } from 'react'
-import { useController, UseControllerProps } from 'react-hook-form'
+import { useController } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
 
 export interface InputComboBoxProps {
   disabled: boolean
   clearErrors: any
-  errors: any
+  error: any
   setValue: any
+  controllerProps: any
 }
 
-export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
-  props: InputComboBoxProps & UseControllerProps,
-) => {
+export const InputComboBox: FC<InputComboBoxProps> = ({
+  disabled,
+  clearErrors,
+  error: error,
+  setValue,
+  controllerProps,
+}) => {
   const {
     field: { value, onChange },
-  } = useController(props)
-
-  const { errors, setValue, disabled, clearErrors } = props
+  } = useController(controllerProps)
 
   const [query, setQuery] = useState('')
 
-  const [search, { data, loading, error }] = useLazyQuery(SEARCH_PROFILES_BY_HANDLE)
+  const [search, { data, loading, error: loadingError }] = useLazyQuery(SEARCH_PROFILES_BY_HANDLE)
   const debouncedSearch = useCallback(
     debounce(() => {
       if (!query) return
-      console.log(`Searching ${query}…`)
+      // console.log(`Searching ${query}…`)
       search({
         variables: {
           request: {
@@ -56,7 +59,7 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
   const handleSelectedProfiles = (profiles: LensProfile[]) => {
     const newProfiles = [...(value || []), ...profiles]
     setValue('raceParticipants', newProfiles)
-    console.log('Clearing errors...')
+    // console.log('Clearing errors...')
     clearErrors('raceParticipants')
     setQuery('')
   }
@@ -75,7 +78,7 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
               tw`w-full rounded-lg border-primary border ring-primary/70 focus:(border-primary ring-primary) sm:text-sm`,
               disabled &&
                 tw`cursor-not-allowed border-base-content/20 bg-base-100 text-base-content/20 shadow-sm placeholder:text-base-content/20`,
-              errors[props?.name] &&
+              error &&
                 tw`border-error pr-10 placeholder:text-error focus:(border-error ring-error)`,
             ]}
             // tw="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:(border-primary outline-none ring-1 ring-primary) sm:text-sm"
@@ -181,7 +184,7 @@ export const InputComboBox: FC<InputComboBoxProps & UseControllerProps> = (
           ))}
         </div>
       )}
-      {errors[props?.name] && <p tw="mt-2 text-xs text-error">{errors[props?.name].message}</p>}
+      {error && <p tw="mt-2 text-xs text-error">{error.message}</p>}
     </>
   )
 }

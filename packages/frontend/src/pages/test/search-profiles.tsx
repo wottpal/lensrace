@@ -15,7 +15,7 @@ const Test: NextPage = () => {
   const debouncedSearch = useCallback(
     debounce(() => {
       if (!query) return
-      console.log(`Searching ${query}…`)
+      // console.log(`Searching ${query}…`)
       search({
         variables: {
           request: {
@@ -32,7 +32,7 @@ const Test: NextPage = () => {
     debouncedSearch()
   }, [query])
 
-  console.log({ data })
+  // console.log({ data })
   return (
     <>
       <form>

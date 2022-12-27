@@ -5,6 +5,7 @@ import { Input } from '@components/shared/Input'
 import { InputComboBox } from '@components/shared/InputCombobox'
 import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { LensProfile } from '@models/LensProfile'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
 import { FieldError, SubmitHandler, useForm } from 'react-hook-form'
@@ -23,20 +24,10 @@ const schema = yup
   .required()
 
 export type FormInputs = {
-  lensHandle: any
+  lensHandle: LensProfile
   raceName: string
   followerGoal: number
-  profileIds: number[]
-}
-
-export type Profile = {
-  profileId: string
-  handle: string
-  picture: {
-    original: {
-      url: string
-    }
-  }
+  raceParticipants: LensProfile[]
 }
 
 const HomePage: NextPage = () => {
@@ -87,10 +78,9 @@ const HomePage: NextPage = () => {
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
             disabled={disabled}
-            name="raceParticipants"
-            errors={errors}
+            error={errors.raceParticipants as FieldError}
             clearErrors={clearErrors}
-            control={control}
+            controllerProps={{ name: 'raceParticipants', control: control }}
             setValue={setValue}
           />
           {/* Set Name */}
