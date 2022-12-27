@@ -43,6 +43,7 @@
     "react-hook-form": "^7.40.0",
     "react-hot-toast": "^2.4.0",
     "sharp": "^0.31.2",
+    "spinners-react": "^1.0.7",
     "use-async-effect": "^2.2.7",
     "wagmi": "^0.8.10",
     "yup": "^0.32.11",

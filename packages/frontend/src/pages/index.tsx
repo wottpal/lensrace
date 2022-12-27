@@ -1,9 +1,9 @@
 import { ActiveRaces } from '@components/home/ActiveRaces'
 import { CenterBody } from '@components/layout/CenterBody'
+import { BaseButton, BaseButtonGroup } from '@components/shared/BaseButton'
 import { Hero } from '@components/shared/Hero'
 import { raceData } from '@models/Race.model'
 import type { NextPage } from 'next'
-import Link from 'next/link'
 import 'twin.macro'
 
 const HomePage: NextPage = () => {
@@ -11,13 +11,11 @@ const HomePage: NextPage = () => {
     <>
       <CenterBody>
         <Hero />
-        {/* TODO: Refactor to @apply custom style btn css class or component */}
-        <Link
-          tw="btn btn-primary btn-wide rounded-full border-primary bg-primary font-mono font-bold text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)"
-          href="/setup"
-        >
-          Start a new race
-        </Link>
+
+        <BaseButtonGroup>
+          <BaseButton href="/setup">Start new Race</BaseButton>
+        </BaseButtonGroup>
+
         <ActiveRaces races={raceData} />
       </CenterBody>
     </>

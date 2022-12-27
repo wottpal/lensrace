@@ -1,4 +1,5 @@
 import { CenterBody } from '@components/layout/CenterBody'
+import { BaseButton, BaseButtonGroup } from '@components/shared/BaseButton'
 import { DividerHeading } from '@components/shared/DividerHeading'
 import { Hero } from '@components/shared/Hero'
 import { Input } from '@components/shared/Input'
@@ -6,8 +7,9 @@ import { InputComboBox } from '@components/shared/InputCombobox'
 import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LensProfile } from '@models/LensProfile'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
 import { FieldError, SubmitHandler, useForm } from 'react-hook-form'
 import 'twin.macro'
 import tw from 'twin.macro'
@@ -31,11 +33,15 @@ export type FormInputs = {
 }
 
 const HomePage: NextPage = () => {
-  // Disabled state for forms
-  const { isDisconnected } = useAccount()
+  const { openConnectModal } = useConnectModal()
+  const { isConnected } = useAccount()
   const { chain } = useNetwork()
 
-  const disabled = isDisconnected || !!chain?.unsupported
+  // Disabled state for form
+  const [isDisabled, setIsDisabled] = useState(true)
+  useEffect(() => {
+    setIsDisabled(!isConnected || !!chain?.unsupported)
+  }, [isConnected, chain])
 
   // React Form state Management
   const {
@@ -51,33 +57,33 @@ const HomePage: NextPage = () => {
   })
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log({ data })
 
-  // console.log({ errors })
-  // console.log('watch', watch())
-  // console.log({ disabled })
-  // console.log('chainUnsupported: ', !!chain?.unsupported)
-
   return (
     <>
       <CenterBody>
         <Hero />
         {/* Connect Wallet */}
-        <ConnectButton accountStatus="address" />
+        {isConnected ? (
+          <ConnectButton accountStatus="address" showBalance={false} />
+        ) : (
+          <BaseButton onClick={openConnectModal}>Connect Wallet</BaseButton>
+        )}
+
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          css={[tw`mx-auto w-full max-w-sm`, disabled && tw`text-base-content/20`]}
+          css={[tw`mx-auto w-full max-w-sm`, isDisabled && tw`text-base-content/20`]}
         >
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
           <InputSelect
-            disabled={disabled}
+            disabled={isDisabled}
             error={errors.lensHandle as FieldError}
             controllerProps={{ name: 'lensHandle', control: control }}
           />
           {/* Select Lens Participants */}
           <DividerHeading title="Choose Race Participants" />
           <InputComboBox
-            disabled={disabled}
+            disabled={isDisabled}
             error={errors.raceParticipants as FieldError}
             clearErrors={clearErrors}
             controllerProps={{ name: 'raceParticipants', control: control }}
@@ -86,7 +92,7 @@ const HomePage: NextPage = () => {
           {/* Set Name */}
           <DividerHeading title="Set Custom Race Name" />
           <Input
-            disabled={disabled}
+            disabled={isDisabled}
             placeholder="Awesome race"
             input="text"
             registerId="raceName"
@@ -97,28 +103,20 @@ const HomePage: NextPage = () => {
           {/* Set Follower Goal */}
           <DividerHeading title="Set Absolute Follower Goal" />
           <Input
-            disabled={disabled}
+            disabled={isDisabled}
             placeholder="100"
             input="number"
             registerId="followerGoal"
             register={register}
             errors={errors}
           />
-          {/* Setup Button */}
 
-          {/* TODO: Refactor button */}
-          <div tw="flex flex-col items-center">
-            <button
-              disabled={disabled}
-              type="submit"
-              css={[
-                tw`btn btn-primary btn-wide my-6 rounded-full border-primary bg-primary font-bold font-mono text-lg text-white normal-case hover:(border-primary-focus bg-primary-focus)`,
-                disabled && tw`border-primary/20 bg-primary/20`,
-              ]}
-            >
+          {/* Setup Button */}
+          <BaseButtonGroup tw="mt-12">
+            <BaseButton disabled={isDisabled} type="submit">
               Start Race
-            </button>
-          </div>
+            </BaseButton>
+          </BaseButtonGroup>
         </form>
       </CenterBody>
     </>
