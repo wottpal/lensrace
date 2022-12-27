@@ -5,9 +5,9 @@ export interface WrapperProps {
   noHorizontalPadding?: boolean
 }
 export const Wrapper = styled.div(({ noVerticalPadding, noHorizontalPadding }: WrapperProps) => [
-  tw`relative mx-auto w-full max-w-[1200px]`,
-  noVerticalPadding ? tw`py-0` : tw`py-4 sm:py-6 lg:py-8`,
-  noHorizontalPadding ? tw`px-4` : tw`sm:px-8`,
+  tw`relative mx-auto w-full max-w-[35rem]`,
+  noVerticalPadding ? tw`py-0` : tw`py-6 sm:py-8 lg:py-12`,
+  noHorizontalPadding ? tw`px-0` : tw`px-4 sm:px-8`,
 ])
 
 export const NegativeWrapper = styled.div(() => [

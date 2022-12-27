@@ -22,4 +22,9 @@ export const env = {
     137: process.env.NEXT_PUBLIC_RPC_137!, // Polygon Mainnet
     80001: process.env.NEXT_PUBLIC_RPC_80001!, // Mumbai
   },
+
+  lensApiUrl:
+    process.env.NEXT_PUBLIC_PRODUCTION_MODE === 'true'
+      ? 'https://api.lens.dev'
+      : 'https://api.lens.dev', // Lens API URL
 }
