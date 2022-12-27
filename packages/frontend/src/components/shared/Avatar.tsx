@@ -14,7 +14,7 @@ export const Avatar: FC<AvatarProps> = ({ participant }) => {
     <div
       data-tip="hello"
       key={participant.avatar}
-      tw="tooltip w-16 rounded-full ring ring-offset-base-100 ring-offset-2 ring-[#4BC951]"
+      tw="tooltip w-14 rounded-full ring ring-offset-base-100 ring-offset-2 ring-[#4BC951]"
     >
       <Image src={participant.avatar} width={50} height={50} alt={participant.name} />
     </div>

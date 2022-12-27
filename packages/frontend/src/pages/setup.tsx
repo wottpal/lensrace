@@ -1,13 +1,12 @@
-import { CenterBody } from '@components/layout/CenterBody'
+import { HomeLayout } from '@components/home/HomeLayout'
 import { BaseButton, BaseButtonGroup } from '@components/shared/BaseButton'
+import { ConnectWalletButton } from '@components/shared/ConnectWalletButton'
 import { DividerHeading } from '@components/shared/DividerHeading'
-import { Hero } from '@components/shared/Hero'
 import { Input } from '@components/shared/Input'
 import { InputComboBox } from '@components/shared/InputCombobox'
 import { InputSelect } from '@components/shared/InputSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LensProfile } from '@models/LensProfile'
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { FieldError, SubmitHandler, useForm } from 'react-hook-form'
@@ -33,7 +32,6 @@ export type FormInputs = {
 }
 
 const HomePage: NextPage = () => {
-  const { openConnectModal } = useConnectModal()
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
 
@@ -59,20 +57,11 @@ const HomePage: NextPage = () => {
 
   return (
     <>
-      <CenterBody>
-        <Hero />
-        {/* Connect Wallet */}
-        {isConnected ? (
-          <ConnectButton accountStatus="address" showBalance={false} />
-        ) : (
-          <BaseButton onClick={openConnectModal}>Connect Wallet</BaseButton>
-        )}
+      <HomeLayout>
+        <ConnectWalletButton />
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          css={[tw`mx-auto w-full max-w-sm`, isDisabled && tw`text-base-content/20`]}
-        >
+        <form onSubmit={handleSubmit(onSubmit)} css={[isDisabled && tw`opacity-30`]}>
           {/* Select Lens Handle */}
           <DividerHeading title="Select Lens Handle" />
           <InputSelect
@@ -118,7 +107,7 @@ const HomePage: NextPage = () => {
             </BaseButton>
           </BaseButtonGroup>
         </form>
-      </CenterBody>
+      </HomeLayout>
     </>
   )
 }
