@@ -36,6 +36,9 @@
     "files.associations": {
       ".env.*": "dotenv"
     },
+    "[solidity]": {
+      "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+    },
     "peacock.color": "#4bc951",
     "workbench.colorCustomizations": {
       "sash.hoverBorder": "#72d577",

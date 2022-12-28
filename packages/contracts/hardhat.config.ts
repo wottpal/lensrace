@@ -1,4 +1,5 @@
 import '@nomicfoundation/hardhat-toolbox'
+import '@openzeppelin/hardhat-upgrades'
 import * as dotenv from 'dotenv'
 import 'hardhat-deploy'
 import { HardhatUserConfig } from 'hardhat/config'
@@ -13,25 +14,21 @@ const config: HardhatUserConfig = {
   solidity: '0.8.10',
   networks: {
     hardhat: {
-      chainId: 1337,
+      // chainId: 1337,
       // allowUnlimitedContractSize: false,
-      // blockGasLimit: 20000000,
-      //   forking: {
-      //     url: "https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_MUMBAI}",
-      //     url: "https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_RINKEBY}",
-      //     url: "https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_MAINNET}",
-      //   },
+
+      // Polygon Mainnet Fork
+      chainId: 137,
+      forking: {
+        url: process.env.RPC_137 || 'https://rpc.ankr.com/polygon',
+        blockNumber: 35934500, // 2022-11-22 evening CET
+      },
     },
     mumbai: {
       chainId: 80001,
       url: process.env.RPC_80001 || 'https://rpc.ankr.com/polygon_mumbai',
       accounts,
     },
-    // goerli: {
-    //   chainId: 5,
-    //   url: process.env.RPC_5 || 'https://rpc.ankr.com/eth_goerli',
-    //   accounts,
-    // },
   },
   namedAccounts: {
     deployer: {
