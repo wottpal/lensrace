@@ -1,6 +1,6 @@
 import { CenterBody } from '@components/layout/CenterBody'
 import { Hero } from '@components/shared/Hero'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 import 'twin.macro'
 
 const HomePage: NextPage = () => {
@@ -17,3 +17,11 @@ const HomePage: NextPage = () => {
 }
 
 export default HomePage
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  return {
+    props: {},
+  }
+}
