@@ -12,7 +12,6 @@ const HomePage: NextPage = () => {
         <BaseButtonGroup>
           <BaseButton href="/setup">Start new Race</BaseButton>
         </BaseButtonGroup>
-
         <ActiveRaces races={raceData} />
       </HomeLayout>
     </>

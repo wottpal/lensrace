@@ -1,10 +1,9 @@
 import { HomeLayout } from '@components/home/HomeLayout'
 import { BaseButton, BaseButtonGroup } from '@components/shared/BaseButton'
-import { Indicator } from '@components/shared/Indicator'
-import { ArrowTopRightOnSquareIcon, TrophyIcon } from '@heroicons/react/20/solid'
-import { ShareIcon } from '@heroicons/react/24/solid'
+import { RaceCard } from '@components/shared/RaceCard'
+import { TrophyIcon } from '@heroicons/react/20/solid'
+import { ArrowTopRightOnSquareIcon, ShareIcon } from '@heroicons/react/24/solid'
 import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
-import Link from 'next/link'
 import 'twin.macro'
 
 const HomePage: NextPage = () => {
@@ -28,32 +27,25 @@ const HomePage: NextPage = () => {
           </BaseButton>
         </BaseButtonGroup>
         {/* Race details */}
-        <div tw="py-6">
-          {/* Gray container */}
-          <div tw="mx-auto max-w-sm rounded-xl border p-4">
-            <div tw="flex flex-col space-y-4">
-              {/* Race and Explorer Row */}
-              <div tw="flex flex-row justify-between">
-                <div tw="flex items-center">
-                  <p tw="font-bold text-xl text-base-content">Race #42</p>
-                  <Indicator />
-                </div>
-                {/* TODO: Add variable for link explorer */}
-                <Link href={'/race/123'}>
-                  <span tw="flex flex-row text-primary hover:text-primary-focus">
-                    Explorer <ArrowTopRightOnSquareIcon tw="ml-2 h-5 w-5" />
-                  </span>
-                </Link>
-              </div>
-              {/* Follower Goal Row */}
-              <div tw="flex flex-row justify-between font-mono text-lg">
-                <span>Follower Goal:</span>
-                <p tw="font-semibold">15.0000</p>
-              </div>
+        <div tw="py-12">
+          <RaceCard
+            name="Race #42"
+            link="/race/123"
+            label="Explorer"
+            icon={<ArrowTopRightOnSquareIcon tw="ml-2 h-5 w-5" />}
+          >
+            {/* TODO: Add more Details */}
+
+            <div tw="flex flex-row justify-between font-mono text-lg">
+              <span>Follower Goal:</span>
+              <p tw="font-semibold">15.0000</p>
             </div>
-          </div>
+            <div tw="flex flex-row justify-between font-mono text-lg">
+              <span>Follower Goal:</span>
+              <p tw="font-semibold">15.0000</p>
+            </div>
+          </RaceCard>
         </div>
-        {/* Leaderboard */}
       </HomeLayout>
     </>
   )
